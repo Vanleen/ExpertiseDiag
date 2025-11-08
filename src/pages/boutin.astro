@@ -1,0 +1,27 @@
+---
+import DiagServicePage from "../components/DiagServicePage.astro";
+
+const pageTitle = "Mesurage Loi Boutin — Surface habitable | Expertise Diag";
+const description = "Loi Boutin : surface habitable à mentionner dans tout bail d’habitation (location). Intervention rapide en Île-de-France et alentours (89, 45, 28).";
+---
+<DiagServicePage
+  idBase="boutin"
+  pageTitle={pageTitle}
+  description={description}
+  stickyTitle="Mesurage Loi Boutin"
+  breadcrumbFull="Mesurage Loi Boutin — Surface habitable (location)"
+  imgSrc="/img/diagnostics/boutin.svg"
+  imgAlt="Icône Mesurage Loi Boutin"
+  tags={["Location","Surface habitable","Baux d’habitation"]}
+  jsonLdName="Mesurage Loi Boutin"
+>
+  <div slot="cardIntro">
+    Calcule la <strong>surface habitable</strong> à indiquer dans tout bail d’habitation (location).
+  </div>
+
+  <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Objectif</h2>
+  <p class="mt-3 text-gray-700 max-w-3xl">Assurer la <strong>transparence</strong> locataire et la conformité du bail.</p>
+
+  <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Différence Carrez/Boutin</h3>
+  <p class="mt-2 text-gray-700 max-w-3xl">La logique de calcul diffère de la <strong>Loi Carrez</strong> (vente) ; périmètres non identiques.</p>
+</DiagServicePage>

@@ -1,0 +1,220 @@
+---
+// src/components/DiagServicePage.astro
+import Layout from "../layouts/Base.astro";
+
+const {
+  idBase,
+  pageTitle,
+  description,
+  stickyTitle,
+  breadcrumbFull,
+  imgSrc,
+  imgAlt,
+  tags = [],
+  jsonLdName = stickyTitle,
+  jsonLdServiceType = "Diagnostic immobilier",
+  areaServed = ["Île-de-France","Yonne (89)","Loiret (45)","Eure-et-Loir (28)"],
+} = Astro.props;
+---
+
+<Layout title={pageTitle} description={description}>
+  <style is:global>
+    #siteHeader { border-bottom: 0 !important; }
+
+    /* Sticky breadcrumb (doux + accessible) */
+    .sticky-crumb{
+      position:fixed; left:0; right:0; top:var(--hdr-top,72px);
+      z-index:45; background:#F3F4F8; border-bottom:1px solid rgba(0,0,0,.08);
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
+      opacity:0; transform:translateY(-8px);
+      transition:opacity .18s ease-out, transform .18s ease-out;
+      pointer-events:none;
+    }
+    .sticky-crumb.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+    .sticky-crumb.hidden{ opacity:0; transform:translateY(-8px); pointer-events:none; }
+    .sticky-crumb .row{ max-width:72rem; margin:0 auto; padding:.6rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+    .sticky-crumb .title{ font-weight:600; color:#11114E; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sticky-crumb .btn{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid rgba(0,0,0,.12); border-radius:.5rem; padding:.45rem .65rem; background:#fff; color:#11114E; font-size:.9rem; }
+    .sticky-crumb .btn svg{ width:18px; height:18px; }
+    .sticky-crumb .btn span{ display:none; }
+    @media (min-width:640px){ .sticky-crumb .btn span{ display:inline; } }
+  </style>
+
+  <!-- Root local pour tout sélectionner sans IDs dynamiques -->
+  <div data-diag-root data-id={idBase}>
+    <!-- HERO bleu + fil -->
+    <section class="relative bg-[#11114E] overflow-visible">
+      <div class="max-w-6xl mx-auto px-6 relative">
+        <nav aria-label="Fil d’Ariane" class="relative z-[2] text-sm text-white/90 pt-4 pb-2">
+          <a href="/diagnostics" class="underline underline-offset-4 hover:no-underline">Diagnostics immobiliers</a>
+          <span class="mx-2" aria-hidden="true">›</span>
+          <span class="opacity-90">{breadcrumbFull}</span>
+        </nav>
+
+        <div class="js-hero h-[440px] md:h-[500px]" aria-hidden="true"></div>
+
+        <!-- Carte débordante -->
+        <div
+          class="js-card absolute left-1/2 -translate-x-1/2 top-14 md:top-16
+                 w-[1140px] max-w-[92vw]
+                 h-auto md:h-[650px]
+                 bg-[#F3F4F8] rounded-xl md:rounded-2xl shadow-sm
+                 p-6 sm:p-8 md:p-12
+                 flex flex-col md:flex-row items-center
+                 gap-6 md:gap-10 lg:gap-16 z-[1]">
+
+          <div class="w-full md:w-1/2 flex justify-center md:justify-start">
+            <img src={imgSrc} alt={imgAlt} class="w-[78%] sm:w-[70%] md:w-full max-w-[420px]" loading="lazy" decoding="async" />
+          </div>
+
+          <div class="w-full md:w-1/2 min-w-0 flex flex-col gap-5 md:gap-7">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#11114E] leading-tight">
+              {stickyTitle}
+            </h1>
+
+            <div class="text-base sm:text-lg text-[#11114E]/90">
+              <slot name="cardIntro" />
+            </div>
+
+           {tags.length > 0 && (
+  <div class="flex flex-wrap gap-2" aria-label="Contexte">
+    {(tags as string[]).map((t: string) => (
+      <span class="inline-flex items-center rounded-full border border-[#11114E]/20 bg-white px-3 py-1 text-sm">{t}</span>
+    ))}
+  </div>
+)}
+
+
+            <div class="mt-1 md:mt-3">
+              <a href="/contact" class="inline-block bg-[#FF7B00] text-white text-lg font-semibold px-8 py-3 rounded-md hover:opacity-90 transition self-start">
+                Demander un devis
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Espace sous carte (ajusté en JS) -->
+    <div class="js-spacer" aria-hidden="true" style="height:220px;"></div>
+
+    <!-- Sticky breadcrumb -->
+    <div class="js-sticky sticky-crumb" aria-hidden="true">
+      <div class="row">
+        <div class="title">{stickyTitle}</div>
+        <button type="button" class="js-share btn" aria-label="Partager sur WhatsApp">
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <path d="M16.04 3.2c-6.97 0-12.64 5.66-12.64 12.64 0 2.22.59 4.31 1.62 6.11L3.2 28.8l7.02-1.77c1.72.94 3.69 1.47 5.82 1.47 6.97 0 12.64-5.66 12.64-12.64S23.01 3.2 16.04 3.2Z" stroke="#11114E" stroke-width="1.5"/>
+            <path d="M11.7 10.5c-.2-.44-.41-.45-.6-.45h-.52c-.18 0-.47.07-.72.35-.25.28-.95.92-.95 2.25s.98 2.61 1.12 2.79c.14.18 1.89 3.02 4.61 4.11 2.28.9 2.74.72 3.24.67.5-.05 1.59-.65 1.81-1.27.22-.62.22-1.15.16-1.27-.07-.12-.25-.2-.52-.35-.27-.15-1.59-.79-1.84-.88-.25-.09-.43-.14-.61.14-.18.29-.7.88-.86 1.06-.16.18-.32.2-.59.05-.27-.15-1.15-.42-2.2-1.33-.81-.72-1.35-1.6-1.51-1.87-.16-.27-.02-.42.12-.56.13-.13.29-.34.43-.51.14-.18.18-.29.27-.49.09-.2.05-.37-.02-.52-.07-.15-.56-1.34-.77-1.83Z" fill="#25D366"/>
+          </svg>
+          <span>Partager</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- CONTENU principal -->
+    <section class="bg-white">
+      <div class="px-6 py-14 max-w-6xl mx-auto">
+        <slot />
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="bg-[#F3F4F8]">
+      <div class="px-6 py-14 max-w-6xl mx-auto text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">
+          Besoin d’un {stickyTitle.toLowerCase()}&nbsp;?
+        </h2>
+        <p class="mt-2 text-gray-700">Demandez votre devis gratuit : réponse rapide et créneaux sous 24–48h.</p>
+        <a href="/contact" class="mt-6 inline-block bg-[#FF7B00] text-white font-semibold px-8 py-3 rounded-md hover:opacity-90 transition">
+          Demander un devis
+        </a>
+      </div>
+    </section>
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+      {JSON.stringify({
+        "@context":"https://schema.org",
+        "@type":"Service",
+        "name": jsonLdName,
+        "serviceType": jsonLdServiceType,
+        "areaServed": areaServed,
+        "provider": { "@type":"Organization", "name":"Expertise Diag" },
+        "description": description
+      })}
+    </script>
+  </div>
+
+  <!-- JS robuste (sélection par classes, pas d’IDs dynamiques) -->
+  <script is:inline>
+    (function(){
+      const root    = document.currentScript?.previousElementSibling?.closest('[data-diag-root]') || document.querySelector('[data-diag-root]');
+      if (!root) return;
+
+      const header  = document.getElementById('siteHeader');
+      const hero    = root.querySelector('.js-hero');
+      const card    = root.querySelector('.js-card');
+      const spacer  = root.querySelector('.js-spacer');
+      const sticky  = root.querySelector('.js-sticky');
+      const share   = root.querySelector('.js-share');
+      const overlay = document.getElementById('drawerOverlay');
+      const menuBtn = document.getElementById('menuBtn');
+
+      function syncTop(){
+        const h = header?.offsetHeight || 72;
+        sticky?.style.setProperty('--hdr-top', h + 'px');
+      }
+      function syncSpacer(){
+        if(!hero || !card || !spacer) return;
+        const heroH   = hero.offsetHeight;
+        const cardTop = parseFloat(getComputedStyle(card).top) || 0;
+        const cardH   = card.offsetHeight;
+        const desiredGap = window.innerWidth < 640 ? 8 : 12; // why: cohérence mobile/desktop
+        const minGap     = 6;
+        const needed     = Math.max(minGap, (cardTop + cardH) - heroH + desiredGap);
+        spacer.style.height = needed + 'px';
+      }
+      function onScroll(){
+        if (!sticky || sticky.classList.contains('hidden')) return;
+        if (window.scrollY > 10) sticky.classList.add('show'); else sticky.classList.remove('show');
+      }
+      function shareWhatsApp(){
+        const title = root?.querySelector('.js-sticky .title')?.textContent?.trim() || document.title;
+        const url   = location.href;
+        const text  = `${title} — ${url}`;
+        if (navigator.share){ navigator.share({ title, url, text }).catch(()=>{}); }
+        else { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank','noopener,noreferrer'); }
+      }
+      function isMenuOpen(){
+        const expanded = menuBtn?.getAttribute('aria-expanded') === 'true';
+        const overlayVisible = overlay && overlay.style.display !== 'none';
+        return !!(expanded || overlayVisible);
+      }
+      function applyMenuState(){
+        const open = isMenuOpen();
+        if (open){ sticky?.classList.add('hidden'); sticky?.classList.remove('show'); }
+        else { sticky?.classList.remove('hidden'); onScroll(); }
+      }
+
+      function init(){ syncTop(); syncSpacer(); onScroll(); applyMenuState(); }
+      init();
+
+      window.addEventListener('resize', ()=>{ syncTop(); syncSpacer(); }, { passive:true });
+      window.addEventListener('scroll', onScroll, { passive:true });
+      share?.addEventListener('click', shareWhatsApp);
+
+      document.fonts?.ready?.then(syncSpacer).catch(()=>{});
+      if ('ResizeObserver' in window && card){ new ResizeObserver(syncSpacer).observe(card); }
+      if (overlay && 'MutationObserver' in window){
+        new MutationObserver(applyMenuState).observe(overlay, { attributes:true, attributeFilter:['style','class'] });
+      }
+      if (menuBtn){
+        if ('MutationObserver' in window){
+          new MutationObserver(applyMenuState).observe(menuBtn, { attributes:true, attributeFilter:['aria-expanded','class'] });
+        }
+        menuBtn.addEventListener('click', () => setTimeout(applyMenuState, 0));
+      }
+    })();
+  </script>
+</Layout>

@@ -1,0 +1,30 @@
+---
+import DiagServicePage from "../components/DiagServicePage.astro";
+
+const pageTitle = "Diagnostic Gaz — État de l’installation | Expertise Diag";
+const description = "Diagnostic gaz : installations > 15 ans, vente/location, points de sécurité. Intervention rapide en Île-de-France et alentours (89, 45, 28).";
+---
+<DiagServicePage
+  idBase="gaz"
+  pageTitle={pageTitle}
+  description={description}
+  stickyTitle="Diagnostic Gaz"
+  breadcrumbFull="Diagnostic Gaz — État de l’installation intérieure"
+  imgSrc="/img/diagnostics/gaz.svg"
+  imgAlt="Icône Diagnostic Gaz"
+  tags={["Installations > 15 ans","Vente","Location"]}
+  jsonLdName="Diagnostic Gaz"
+>
+  <div slot="cardIntro">
+    État de l’installation intérieure de <strong>gaz</strong> de plus de <strong>15 ans</strong>, exigé en <strong>vente</strong> et en <strong>location</strong>.
+  </div>
+
+  <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Objectif</h2>
+  <p class="mt-3 text-gray-700 max-w-3xl">Détecter les défauts pouvant créer des risques d’explosion, d’incendie ou d’intoxication.</p>
+
+  <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Quand obligatoire&nbsp;?</h3>
+  <p class="mt-2 text-gray-700 max-w-3xl">Pour les installations intérieures de gaz de plus de 15 ans en <strong>vente</strong> et <strong>location</strong>.</p>
+
+  <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Contenu</h3>
+  <p class="mt-2 text-gray-700 max-w-3xl">Vérifications des appareils, tuyauteries, aération, évacuation des fumées et <strong>préconisations</strong>.</p>
+</DiagServicePage>

@@ -1,0 +1,273 @@
+---
+import Layout from "../layouts/Base.astro";
+
+const pageTitle = "Diagnostics immobiliers — Expertise Diag";
+const description =
+  "Tous nos diagnostics immobiliers : DPE, amiante, électricité, gaz, plomb, loi Carrez, loi Boutin, termites. Intervention rapide à Saint-Mandé, Île-de-France et alentours (89, 45, 28).";
+
+const items = [
+  { slug:"dpe", title:"DPE (Diagnostic de Performance Énergétique)", img:"/img/diagnostics/dpe.svg",
+    teaser:"Obligatoire à la vente/location. Étiquette énergie & climat.",
+    bullets:["Vente & location","Maisons / Appartements","Validité 10 ans"] },
+  { slug:"amiante", title:"Diagnostic Amiante", img:"/img/diagnostics/amiante.svg",
+    teaser:"Repérage des matériaux susceptibles de contenir de l’amiante.",
+    bullets:["Avant 1997","Vente / travaux","Rapport détaillé"] },
+  { slug:"electricite", title:"Diagnostic Électricité", img:"/img/diagnostics/electricite.svg",
+    teaser:"État de l’installation intérieure d’électricité (+15 ans).",
+    bullets:["Installations > 15 ans","Vente & location","Sécurité"] },
+  { slug:"gaz", title:"Diagnostic Gaz", img:"/img/diagnostics/gaz.svg",
+    teaser:"État de l’installation intérieure de gaz (+15 ans).",
+    bullets:["Installations > 15 ans","Vente & location","Sécurité"] },
+  { slug:"plomb", title:"CREP — Plomb", img:"/img/diagnostics/plomb.svg",
+    teaser:"Contrôle de la présence de plomb dans les logements anciens.",
+    bullets:["Avant 1949","Vente & location","Prévention des risques"] },
+  { slug:"carrez", title:"Mesurage Loi Carrez", img:"/img/diagnostics/carrez.svg",
+    teaser:"Surface privative des lots de copropriété (vente).",
+    bullets:["Copropriétés","Vente obligatoire","Mesurage certifié"] },
+  { slug:"boutin", title:"Mesurage Loi Boutin (surface habitable)", img:"/img/diagnostics/boutin.svg",
+    teaser:"Surface habitable à mentionner dans tout bail d’habitation (location).",
+    bullets:["Location","Surface habitable","Baux d’habitation"] },
+  { slug:"termites", title:"Diagnostic Termites", img:"/img/diagnostics/termites.svg",
+    teaser:"Recherche d’insectes xylophages en zones concernées.",
+    bullets:["Zones à risque","Avant vente","État parasitaire"] },
+];
+---
+
+<Layout title={pageTitle} description={description}>
+  <!-- Retirer la bordure basse du header UNIQUEMENT sur cette page -->
+  <style is:global>
+    #siteHeader { border-bottom: 0 !important; }
+
+    /* Sticky compact + apparition douce */
+    .sticky-crumb{
+      position:fixed; left:0; right:0; top:var(--hdr-top,72px);
+      z-index:45; background:#F3F4F8; border-bottom:1px solid rgba(0,0,0,.08);
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
+      opacity:0; transform:translateY(-8px);
+      transition:opacity .18s ease-out, transform .18s ease-out;
+      pointer-events:none;
+    }
+    .sticky-crumb.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+    .sticky-crumb.hidden{ opacity:0; transform:translateY(-8px); pointer-events:none; }
+    .sticky-crumb .row{ max-width:72rem; margin:0 auto; padding:.6rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+    .sticky-crumb .title{ font-weight:600; color:#11114E; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sticky-crumb .btn{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid rgba(0,0,0,.12); border-radius:.5rem; padding:.45rem .65rem; background:#fff; color:#11114E; font-size:.9rem; }
+    .sticky-crumb .btn svg{ width:18px; height:18px; }
+    .sticky-crumb .btn span{ display:none; }
+    @media (min-width:640px){ .sticky-crumb .btn span{ display:inline; } }
+  </style>
+
+  <section class="relative bg-[#11114E] overflow-visible">
+    <div class="max-w-6xl mx-auto px-6 relative">
+      <!-- Fil d’Ariane -->
+      <nav aria-label="Fil d’Ariane"
+           class="relative z-20 text-sm text-white/90 pt-4 pb-2">
+        <a href="/" class="underline underline-offset-4 hover:no-underline">Accueil</a>
+        <span class="mx-2" aria-hidden="true">›</span>
+        <span class="opacity-90">Diagnostics immobiliers</span>
+      </nav>
+
+      <!-- Hero -->
+      <div id="diag-hero" aria-hidden="true" class="h-[440px] md:h-[500px]"></div>
+
+      <!-- Carte -->
+      <div
+        id="diag-card"
+        class="absolute left-1/2 -translate-x-1/2 top-16 md:top-10
+               w-[1140px] max-w-[92vw]
+               h-auto md:h-[650px]
+               bg-[#F3F4F8] rounded-xl md:rounded-2xl shadow-sm
+               p-6 sm:p-8 md:p-12
+               flex flex-col md:flex-row items-center
+               gap-6 md:gap-10 lg:gap-16
+               z-[10]">
+
+        <!-- Image -->
+        <div class="w-full md:w-1/2 flex justify-center md:justify-start">
+          <img
+            src="/img/ui/ville.svg"
+            alt="Illustration ville moderne"
+            class="w-[78%] sm:w-[70%] md:w-full max-w-[420px]"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- Texte -->
+        <div class="w-full md:w-1/2 flex flex-col gap-5 md:gap-8">
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-[#11114E] leading-tight">
+            Tous vos diagnostics, au bon moment
+          </h1>
+
+          <p class="text-base sm:text-lg text-[#11114E]/90">
+            DPE, amiante, gaz, électricité, plomb, loi Carrez, loi Boutin, termites.
+            Interventions rapides en Île-de-France et alentours (89, 45, 28).
+          </p>
+
+          <div class="flex flex-wrap gap-2" aria-label="Contexte">
+            <span class="inline-flex items-center rounded-full border border-[#11114E]/20 bg-white px-3 py-1 text-sm">Vente</span>
+            <span class="inline-flex items-center rounded-full border border-[#11114E]/20 bg-white px-3 py-1 text-sm">Location</span>
+            <span class="inline-flex items-center rounded-full border border-[#11114E]/20 bg-white px-3 py-1 text-sm">Travaux</span>
+            <span class="inline-flex items-center rounded-full border border-[#11114E]/20 bg-white px-3 py-1 text-sm">Copropriété</span>
+          </div>
+
+          <div class="mt-1 md:mt-4">
+            <a
+              href="/contact"
+              class="inline-block bg-[#FF7B00] text-white text-lg font-semibold px-8 py-3 rounded-md hover:opacity-90 transition">
+              Demander un devis
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spacer (géré par global.css: .diag-spacer) -->
+  <div aria-hidden="true" class="diag-spacer"></div>
+
+  <!-- STICKY breadcrumb -->
+  <div id="crumb-sticky" class="sticky-crumb" aria-hidden="true">
+    <div class="row">
+      <div class="title">Diagnostics immobiliers</div>
+      <button id="shareBtn" type="button" class="btn" aria-label="Partager">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16.04 3.2c-6.97 0-12.64 5.66-12.64 12.64 0 2.22.59 4.31 1.62 6.11L3.2 28.8l7.02-1.77c1.72.94 3.69 1.47 5.82 1.47 6.97 0 12.64-5.66 12.64-12.64S23.01 3.2 16.04 3.2Z" stroke="#11114E" stroke-width="1.5"/>
+          <path d="M11.7 10.5c-.2-.44-.41-.45-.6-.45h-.52c-.18 0-.47.07-.72.35-.25.28-.95.92-.95 2.25s.98 2.61 1.12 2.79c.14.18 1.89 3.02 4.61 4.11 2.28.9 2.74.72 3.24.67.5-.05 1.59-.65 1.81-1.27.22-.62.22-1.15.16-1.27-.07-.12-.25-.2-.52-.35-.27-.15-1.59-.79-1.84-.88-.25-.09-.43-.14-.61.14-.18.29-.7.88-.86 1.06-.16.18-.32.2-.59.05-.27-.15-1.15-.42-2.2-1.33-.81-.72-1.35-1.6-1.51-1.87-.16-.27-.02-.42.12-.56.13-.13.29-.34.43-.51.14-.18.18-.29.27-.49.09-.2.05-.37-.02-.52-.07-.15-.56-1.34-.77-1.83Z" fill="#25D366"/>
+        </svg>
+        <span>Partager</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- GRILLE : cartes (LIENS → /{slug}) -->
+  <section class="bg-white">
+    <div class="px-6 py-14 max-w-6xl mx-auto">
+      <h2 class="sr-only">Liste des diagnostics</h2>
+
+      <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
+        {items.map(({ slug, title, img, teaser, bullets }) => (
+          <a
+            href={`/${slug}`}
+            class="group relative overflow-hidden bg-white border border-[#11114E]/25 rounded-xl p-6 shadow-sm hover:shadow-md transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#11114E]">
+            <div class="mb-4 inline-flex items-center justify-center w-20 h-20 rounded-full bg-white border border-[#11114E]/20 shadow-sm">
+              <img src={img} alt="" class="h-12 w-12" loading="lazy" decoding="async" />
+            </div>
+
+            <h3 class="text-lg font-semibold text-[#11114E] leading-snug">{title}</h3>
+            <p class="mt-2 text-sm text-gray-700">{teaser}</p>
+
+            <ul class="mt-4 grid grid-cols-3 gap-2 text-xs text-[#11114E]">
+              {bullets.map((b) => <li class="rounded-md bg-[#F3F4F8] px-2 py-1 text-center">{b}</li>)}
+            </ul>
+
+            <span class="mt-5 inline-flex items-center gap-2 text-[#FF7B00] underline underline-offset-4">
+              Voir le détail
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12h14M13 5l7 7-7 7" stroke="#FF7B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+
+            <div class="pointer-events-none absolute inset-0 ring-1 ring-transparent group-hover:ring-[#11114E]/10 rounded-xl transition"></div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION SEO (inchangé, tronqué ici pour concision) -->
+  <section class="bg-[#F3F4F8]">
+    <div class="px-6 py-14 max-w-6xl mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">
+        Pourquoi ces diagnostics sont essentiels&nbsp;?
+      </h2>
+      <p class="mt-3 text-gray-700 max-w-3xl">
+        Les diagnostics immobiliers sécurisent la transaction et informent l’acquéreur ou le locataire sur l’état du bien.
+      </p>
+      <!-- … ton contenu détaillé … -->
+      <p class="mt-6 text-gray-700 text-sm">
+        Les obligations varient selon la nature du bien, sa localisation et le projet (vente, location, travaux).
+      </p>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="bg-white text-center">
+    <div class="px-6 py-14 max-w-6xl mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Besoin d’un diagnostic&nbsp;?</h2>
+      <p class="mt-2 text-gray-700">Demandez votre devis gratuit : réponse rapide et créneaux sous 24–48h.</p>
+      <a href="/contact" class="mt-6 inline-block bg-[#FF7B00] text-white font-semibold px-8 py-3 rounded-md hover:opacity-90 transition">
+        Demander un devis
+      </a>
+    </div>
+  </section>
+
+  <!-- JSON-LD CollectionPage (SEO) -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Diagnostics immobiliers — Expertise Diag",
+      "description": description,
+      "hasPart": items.map((i) => ({
+        "@type": "Service",
+        "name": i.title,
+        "url": `https://expertisediag.fr/${i.slug}`,
+      })),
+    })}
+  </script>
+
+  <!-- JS : sticky doux + WhatsApp + masquage pendant burger -->
+  <script is:inline>
+    (function(){
+      const header  = document.getElementById('siteHeader');
+      const sticky  = document.getElementById('crumb-sticky');
+      const shareBtn= document.getElementById('shareBtn');
+      const overlay = document.getElementById('drawerOverlay');
+      const menuBtn = document.getElementById('menuBtn');
+
+      function syncTop(){
+        const h = header?.offsetHeight || 72;
+        sticky?.style.setProperty('--hdr-top', h + 'px');
+      }
+      function onScroll(){
+        if (!sticky) return;
+        if (sticky.classList.contains('hidden')) return;
+        if (window.scrollY > 10) sticky.classList.add('show');
+        else sticky.classList.remove('show');
+      }
+      function share(){
+        const title = 'Diagnostics immobiliers';
+        const url = location.href;
+        const text = `${title} — ${url}`;
+        if (navigator.share){ navigator.share({ title, url, text }).catch(()=>{}); }
+        else { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener,noreferrer'); }
+      }
+      function isMenuOpen(){
+        const expanded = menuBtn?.getAttribute('aria-expanded') === 'true';
+        const overlayVisible = overlay && overlay.style.display !== 'none';
+        return !!(expanded || overlayVisible);
+      }
+      function applyMenuState(){
+        const open = isMenuOpen();
+        if (open){ sticky?.classList.add('hidden'); sticky?.classList.remove('show'); }
+        else { sticky?.classList.remove('hidden'); onScroll(); }
+      }
+      function init(){ syncTop(); onScroll(); applyMenuState(); }
+      init();
+      window.addEventListener('resize', syncTop, { passive:true });
+      window.addEventListener('scroll', onScroll, { passive:true });
+      shareBtn?.addEventListener('click', share);
+      if (overlay && 'MutationObserver' in window){
+        new MutationObserver(applyMenuState)
+          .observe(overlay, { attributes:true, attributeFilter:['style','class'] });
+      }
+      if (menuBtn){
+        if ('MutationObserver' in window){
+          new MutationObserver(applyMenuState)
+            .observe(menuBtn, { attributes:true, attributeFilter:['aria-expanded','class'] });
+        }
+        menuBtn.addEventListener('click', () => setTimeout(applyMenuState, 0));
+      }
+    })();
+  </script>
+</Layout>

@@ -1,0 +1,280 @@
+---
+/*
+// src/components/ConsentBanner.astro
+// Charte : bleu #11114E, orange #FF7B00, panel white, footer bleu-gris
+*/
+---
+<style>
+  :root{
+    --cbz-blue:#11114E;
+    --cbz-orange:#FF7B00;
+    --cbz-footer:#EAEFFE;  /* bleu-gris clair (pied & bouton "Paramétrer") */
+  }
+
+  .cbz-backdrop{
+    position:fixed; inset:0; z-index:9999;
+    display:none; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.45);
+  }
+  .cbz-show{ display:flex; }
+
+  /* Modal réduit */
+  .cbz-modal{
+    position:relative;
+    width:min(620px,92vw);
+    border-radius:18px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+    overflow:visible;
+    background:transparent;
+  }
+
+  .cbz-box{
+    background:#fff;         /* fond BLANC demandé */
+    border-radius:18px;
+    overflow:hidden;
+  }
+
+  .cbz-content{ padding:22px 20px 14px; position:relative; }
+
+  /* Badge/logo posé en haut-gauche — même taille que le footer, ombre adoucie */
+  .cbz-badge{
+    position:absolute; top:-26px; left:16px;
+    width:64px; height:64px; border-radius:9999px;
+    background:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 8px 20px rgba(0,0,0,.12);
+    border:1px solid rgba(17,17,78,.10);
+  }
+  .cbz-badge img{ width:78%; height:auto; }
+
+  /* Barre du haut : titre + lien, sur UNE ligne */
+  .cbz-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-left:96px; /* espace pour le badge à gauche */
+    gap:12px; min-height:38px;
+  }
+  .cbz-title{
+    margin:0; font-size:20px; font-weight:700; color:#1c1e2a;
+  }
+  .cbz-toplink{
+    color:var(--cbz-orange); text-decoration:underline;
+    font-weight:500; background:none; border:0; padding:0; cursor:pointer;
+  }
+
+  .cbz-body{ color:#263238; line-height:1.55; font-size:15.5px; padding:10px 0 0; }
+  .cbz-body p{ margin:0 0 10px; }
+
+  /* Pied intégré + boutons */
+  .cbz-footer{
+    display:flex; gap:0; align-items:center;
+    background:var(--cbz-footer);
+    border-top:1px solid rgba(0,0,0,.06);
+  }
+  .half{ flex:1 1 50%; }
+
+  .cbz-btn{
+    appearance:none; width:100%;
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:12px 14px; font-size:15px; font-weight:500; /* pas bold */
+    cursor:pointer; background:transparent; border:1px solid transparent;
+  }
+  /* Paramétrer : fond bleu-gris clair, texte orange, SANS bordure, coins bas-gauche */
+  .cbz-btn-outline{
+    background:var(--cbz-footer);
+    color:var(--cbz-orange);
+    border:none;
+    border-bottom-left-radius:18px;
+  }
+  /* Tout accepter : fond orange, texte blanc, coins bas-droit */
+  .cbz-btn-primary{
+    background:var(--cbz-orange); color:#fff;
+    border-bottom-right-radius:18px;
+  }
+  .cbz-btn:focus-visible{ outline:2px solid var(--cbz-blue); outline-offset:2px; }
+
+  /* Panneau des préférences */
+  .cbz-sheet{ position:fixed; inset:0; z-index:10000; display:none;
+    align-items:center; justify-content:center; background:rgba(0,0,0,.45);}
+  .cbz-sheet.show{ display:flex; }
+
+  .cbz-card{
+    width:min(620px,92vw); background:#fff;
+    border-radius:16px; overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+  }
+  .cbz-card-head{ display:flex; align-items:center; gap:12px; padding:16px 18px;
+    border-bottom:1px solid rgba(0,0,0,.08); }
+  .cbz-card-head img{ height:28px; width:auto; }
+  .cbz-card-head h3{ margin:0; font-size:18px; color:var(--cbz-blue); }
+  .cbz-row{ padding:14px 18px; border-top:1px solid rgba(0,0,0,.06); }
+  .cbz-row h4{ margin:0 0 6px; font-size:15px; color:var(--cbz-blue); }
+  .cbz-row p{ margin:0; color:#37474F; font-size:14px; }
+  .cbz-pref-footer{
+    display:flex; gap:10px; justify-content:flex-end; padding:14px 18px;
+    background:#F6F7FB; border-top:1px solid rgba(0,0,0,.06);
+  }
+  /* Switch */
+  .switch{ position:relative; width:46px; height:26px; display:inline-block; vertical-align:middle; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{ position:absolute; inset:0; background:#e6e8f0; border-radius:999px;
+    border:1px solid rgba(17,17,78,.15); transition:.2s ease; }
+  .slider:before{ content:""; position:absolute; height:20px; width:20px; left:3px; top:50%;
+    transform:translateY(-50%); background:#fff; border-radius:50%;
+    box-shadow:0 1px 2px rgba(0,0,0,.25); transition:.2s ease; }
+  input:checked + .slider{ background:var(--cbz-blue); }
+  input:checked + .slider:before{ transform:translate(20px,-50%); }
+
+  @media (max-width:420px){
+    .cbz-title{ font-size:18px; }
+    .cbz-btn{ padding:11px 12px; font-size:14px; }
+    .cbz-bar{ padding-left:90px; }
+  }
+</style>
+
+<!-- BANNIÈRE -->
+<div id="cbz" class="cbz-backdrop" role="dialog" aria-modal="true" aria-label="Bannière de consentement">
+  <div class="cbz-modal">
+    <div class="cbz-badge" aria-hidden="true">
+      <img src="/logo1.svg" alt="" />
+    </div>
+
+    <div class="cbz-box">
+      <div class="cbz-content">
+        <div class="cbz-bar">
+          <h2 class="cbz-title">Bienvenue</h2>
+          <button id="cbz-reject" class="cbz-toplink">Continuer sans accepter</button>
+        </div>
+
+        <div class="cbz-body">
+          <p>
+            Nous utilisons des traceurs strictement nécessaires au fonctionnement du site. Avec votre accord,
+            nous utilisons aussi des cookies de <strong>mesure d’audience</strong> afin d’améliorer nos contenus.
+          </p>
+          <p>
+            Vous pouvez <span style="text-decoration:underline; color:var(--cbz-orange)">continuer sans accepter</span>,
+            <strong>paramétrer vos choix</strong> ou <strong>tout accepter</strong>. Vos choix sont conservés 6&nbsp;mois
+            et modifiables à tout moment depuis «&nbsp;Confidentialité &amp; Cookies&nbsp;».
+          </p>
+        </div>
+      </div>
+
+      <div class="cbz-footer">
+        <div class="half">
+          <button id="cbz-open" class="cbz-btn cbz-btn-outline">Paramétrer vos choix</button>
+        </div>
+        <div class="half">
+          <button id="cbz-accept" class="cbz-btn cbz-btn-primary">Tout accepter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRÉFÉRENCES -->
+<div id="cbz-sheet" class="cbz-sheet" aria-hidden="true">
+  <div class="cbz-card" role="dialog" aria-modal="true" aria-label="Préférences cookies">
+    <div class="cbz-card-head">
+      <img src="/logoED.svg" alt="" />
+      <h3>Paramétrer vos choix</h3>
+    </div>
+
+    <div class="cbz-row">
+      <h4>Fonctionnels (obligatoires)</h4>
+      <p>Indispensables au site (sécurité, consentement). Activés par défaut.</p>
+      <label class="switch" aria-label="Fonctionnels obligatoires">
+        <input type="checkbox" checked disabled />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="cbz-row">
+      <h4>Mesure d’audience</h4>
+      <p>Statistiques anonymisées pour améliorer le site (sans publicité).</p>
+      <label class="switch" aria-label="Autoriser la mesure d’audience">
+        <input id="cbz-stat" type="checkbox" />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="cbz-row">
+      <h4>Marketing</h4>
+      <p>Non utilisé actuellement.</p>
+      <label class="switch" aria-label="Autoriser le marketing">
+        <input id="cbz-mkt" type="checkbox" disabled />
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="cbz-pref-footer">
+      <button id="cbz-cancel" class="cbz-btn cbz-btn-outline" style="border-color:#c2c6d9; color:#5b5f73;">Annuler</button>
+      <button id="cbz-save" class="cbz-btn cbz-btn-primary">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const KEY='consent_v1';
+    const $banner=document.getElementById('cbz');
+    const $sheet =document.getElementById('cbz-sheet');
+
+    const $accept=document.getElementById('cbz-accept');
+    const $reject=document.getElementById('cbz-reject');
+    const $open  =document.getElementById('cbz-open');
+    const $save  =document.getElementById('cbz-save');
+    const $cancel=document.getElementById('cbz-cancel');
+    const $stat  =document.getElementById('cbz-stat');
+
+    function getConsent(){ try{ return JSON.parse(localStorage.getItem(KEY)||'null'); }catch{ return null; } }
+    function setConsent(obj){
+      localStorage.setItem(KEY, JSON.stringify({ ...obj, ts:Date.now() }));
+      window.dispatchEvent(new CustomEvent('consent:updated', { detail:obj }));
+    }
+
+    // API publique : ouvrir la bannière ou directement les préférences
+    window.__openConsent = function(mode = 'banner'){
+      const saved = getConsent();
+      if(mode === 'prefs'){
+        // Pré-cocher l'état si déjà choisi
+        if ($stat && saved) $stat.checked = !!saved.stats;
+        $sheet.classList.add('show');
+      } else {
+        // Ouvrir la bannière
+        if ($stat && saved) $stat.checked = !!saved.stats;
+        $banner.classList.add('cbz-show');
+        document.body.style.overflow='hidden';
+      }
+    };
+
+    // Écoutes d'événements globaux
+    window.addEventListener('open-consent', () => window.__openConsent('banner'));
+    window.addEventListener('open-consent-prefs', () => window.__openConsent('prefs'));
+
+    // Affichage initial si pas de choix
+    const saved=getConsent();
+    if(!saved){ $banner.classList.add('cbz-show'); document.body.style.overflow='hidden'; }
+    else { if($stat) $stat.checked=!!saved.stats; }
+
+    // Actions
+    $accept?.addEventListener('click', ()=>{
+      setConsent({necessary:true,stats:true,marketing:false});
+      $banner.classList.remove('cbz-show');
+      document.body.style.overflow='';
+    });
+    $reject?.addEventListener('click', ()=>{
+      setConsent({necessary:true,stats:false,marketing:false});
+      $banner.classList.remove('cbz-show');
+      document.body.style.overflow='';
+    });
+
+    $open?.addEventListener('click', ()=> $sheet.classList.add('show'));
+    $cancel?.addEventListener('click', ()=> $sheet.classList.remove('show'));
+    $save?.addEventListener('click', ()=>{
+      setConsent({necessary:true,stats:!!$stat?.checked,marketing:false});
+      $sheet.classList.remove('show'); $banner.classList.remove('cbz-show'); document.body.style.overflow='';
+    });
+    $sheet?.addEventListener('click', (e)=>{ if (e.target=== $sheet) $sheet.classList.remove('show'); });
+
+    // Debug helper optionnel
+    window.openConsent = () => window.__openConsent('prefs');
+  })();
+</script>

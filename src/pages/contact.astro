@@ -1,0 +1,251 @@
+
+---
+import Layout from "../layouts/Base.astro";
+const pageTitle = "Demander un devis | Expertise Diag";
+const description = "Formulaire de demande de devis — front uniquement (mailto / WhatsApp).";
+---
+<Layout title={pageTitle} description={description}>
+  <style is:global>
+    .devis-wrap{ min-height:calc(100vh - 0px); display:grid; place-items:center; padding:2rem 1rem; background:#f7f8fc; }
+    .devis-modal{ position:relative; width:min(720px, 92vw); border-radius:16px; background:#fff; box-shadow:0 20px 50px rgba(0,0,0,.18); }
+    .devis-head{ padding:16px 18px; border-bottom:1px solid rgba(0,0,0,.06); display:flex; align-items:center; gap:.75rem; }
+    .devis-body{ padding:18px; }
+    .devis-grid{ display:grid; gap:14px; }
+    @media (min-width:640px){ .devis-grid-2{ grid-template-columns:1fr 1fr; gap:14px; } }
+    .help{ font-size:.85rem; color:#475569; }
+    .err{ color:#b91c1c; font-size:.85rem; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border-radius:.5rem; padding:.7rem 1rem; font-weight:600; }
+    .btn-primary{ background:#FF7B00; color:#fff; }
+    .btn-outline{ background:#fff; color:#11114E; border:1px solid rgba(0,0,0,.12); }
+    .visually-hidden{ position:absolute !important; height:1px;width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
+    .actions{ display:flex; flex-wrap:wrap; gap:.5rem; justify-content:space-between; align-items:center; }
+  </style>
+
+  <section class="devis-wrap">
+    <div class="devis-modal" role="dialog" aria-modal="true" aria-labelledby="devis-title">
+      <div class="devis-head">
+        <img src="/logo1.svg" alt="" class="h-8 w-auto" />
+        <h1 id="devis-title" class="text-xl md:text-2xl font-bold text-[#11114E]">Demander un devis</h1>
+      </div>
+
+      <div class="devis-body">
+        <!-- Info mailto -->
+        <div class="mb-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-blue-900">
+          L’envoi ouvre votre client e-mail avec les informations préremplies (aucune donnée n’est stockée côté serveur).
+        </div>
+
+        <form id="devis-form" class="devis-grid" novalidate>
+          <!-- Honeypot (anti-bot) -->
+          <div class="visually-hidden" aria-hidden="true">
+            <label>Ne pas remplir ce champ
+              <input type="text" name="company" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="devis-grid devis-grid-2">
+            <div>
+              <label for="fullName" class="block text-sm font-medium text-[#11114E]">Nom et prénom<span aria-hidden="true" class="text-red-600">*</span></label>
+              <input id="fullName" name="fullName" type="text" required autocomplete="name"
+                     class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. Martin Dupont" />
+              <p class="help">Indiquez la personne à contacter.</p>
+              <p data-err-for="fullName" class="err hidden">Nom requis.</p>
+            </div>
+            <div>
+              <label for="phone" class="block text-sm font-medium text-[#11114E]">Téléphone<span aria-hidden="true" class="text-red-600">*</span></label>
+              <input id="phone" name="phone" type="tel" required inputmode="tel"
+                     pattern="^[0-9+().\s-]{6,}$" autocomplete="tel"
+                     class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. 07 45 68 76 54" />
+              <p class="help">Nous vous rappelons rapidement.</p>
+              <p data-err-for="phone" class="err hidden">Téléphone invalide.</p>
+            </div>
+          </div>
+
+          <div class="devis-grid devis-grid-2">
+            <div>
+              <label for="email" class="block text-sm font-medium text-[#11114E]">Email</label>
+              <input id="email" name="email" type="email" autocomplete="email"
+                     class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. nom@domaine.fr" />
+              <p data-err-for="email" class="err hidden">Email invalide.</p>
+            </div>
+            <div>
+              <label for="city" class="block text-sm font-medium text-[#11114E]">Ville (optionnel)</label>
+              <input id="city" name="city" type="text" autocomplete="address-level2"
+                     class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. Saint-Mandé" />
+            </div>
+          </div>
+
+          <div class="devis-grid devis-grid-2">
+            <div>
+              <label for="propertyType" class="block text-sm font-medium text-[#11114E]">Type de bien</label>
+              <select id="propertyType" name="propertyType" class="mt-1 w-full rounded-md border px-3 py-2">
+                <option value="">— Sélectionner —</option>
+                <option>Appartement</option>
+                <option>Maison</option>
+                <option>Local commercial</option>
+                <option>Autre</option>
+              </select>
+            </div>
+            <div>
+              <label for="context" class="block text-sm font-medium text-[#11114E]">Contexte</label>
+              <select id="context" name="context" class="mt-1 w-full rounded-md border px-3 py-2">
+                <option value="">— Sélectionner —</option>
+                <option>Vente</option>
+                <option>Location</option>
+                <option>Travaux</option>
+                <option>Audit / Conseil</option>
+              </select>
+            </div>
+          </div>
+
+          <fieldset class="mt-1">
+            <legend class="block text-sm font-medium text-[#11114E]">Diagnostics souhaités</legend>
+            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {[
+                "DPE","Amiante","Électricité","Gaz","CREP (Plomb)","Loi Carrez","Loi Boutin","Termites"
+              ].map((label) => (
+                <label class="inline-flex items-center gap-2 text-sm">
+                  <input type="checkbox" name="diagnostics" value={label} />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <div>
+            <label for="message" class="block text-sm font-medium text-[#11114E]">Votre message<span aria-hidden="true" class="text-red-600">*</span></label>
+            <textarea id="message" name="message" required rows="4"
+                      class="mt-1 w-full rounded-md border px-3 py-2"
+                      placeholder="Décrivez votre besoin, adresse du bien, surface, délais…"></textarea>
+            <p data-err-for="message" class="err hidden">Message requis (au moins 10 caractères).</p>
+          </div>
+
+          <div class="rounded-md border border-[#11114E]/15 p-3 bg-[#F6F7FB]">
+            <label class="inline-flex items-start gap-2 text-sm">
+              <input id="consent" name="consent" type="checkbox" required />
+              <span>J’accepte que mes données soient utilisées pour traiter ma demande, conformément à la <a href="/confidentialite" class="underline">Politique de confidentialité</a>. *</span>
+            </label>
+            <p class="help mt-1">Vous pouvez modifier vos préférences à tout moment depuis «&nbsp;Confidentialité &amp; Cookies&nbsp;».</p>
+            <p data-err-for="consent" class="err hidden">Consentement requis.</p>
+          </div>
+
+          <div class="actions pt-2">
+            <button type="button" id="openConsent" class="btn btn-outline">Paramétrer les cookies</button>
+            <div class="flex items-center gap-2">
+              <a href="/" class="btn btn-outline">Annuler</a>
+              <button id="btnWhatsApp" type="button" class="btn btn-outline" title="Envoyer via WhatsApp" aria-label="Envoyer via WhatsApp">
+                <!-- Icône WhatsApp -->
+                <svg viewBox="0 0 32 32" width="18" height="18" fill="none" aria-hidden="true">
+                  <path d="M16.04 3.2c-6.97 0-12.64 5.66-12.64 12.64 0 2.22.59 4.31 1.62 6.11L3.2 28.8l7.02-1.77c1.72.94 3.69 1.47 5.82 1.47 6.97 0 12.64-5.66 12.64-12.64S23.01 3.2 16.04 3.2Z" stroke="#11114E" stroke-width="1.5"/>
+                  <path d="M11.7 10.5c-.2-.44-.41-.45-.6-.45h-.52c-.18 0-.47.07-.72.35-.25.28-.95.92-.95 2.25s.98 2.61 1.12 2.79c.14.18 1.89 3.02 4.61 4.11 2.28.9 2.74.72 3.24.67.5-.05 1.59-.65 1.81-1.27.22-.62.22-1.15.16-1.27-.07-.12-.25-.2-.52-.35-.27-.15-1.59-.79-1.84-.88-.25-.09-.43-.14-.61.14-.18.29-.7.88-.86 1.06-.16.18-.32.2-.59.05-.27-.15-1.15-.42-2.2-1.33-.81-.72-1.35-1.6-1.51-1.87-.16-.27-.02-.42.12-.56.13-.13.29-.34.43-.51.14-.18.18-.29.27-.49.09-.2.05-.37-.02-.52-.07-.15-.56-1.34-.77-1.83Z" fill="#25D366"/>
+                </svg>
+                <span class="hidden sm:inline">WhatsApp</span>
+              </button>
+              <button id="submitBtn" type="submit" class="btn btn-primary">Envoyer par e-mail</button>
+            </div>
+          </div>
+
+          <p class="help mt-2">* Champs obligatoires. Aucun enregistrement côté serveur.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    (function(){
+      const $f = document.getElementById('devis-form');
+      const $submit = document.getElementById('submitBtn');
+      const $btnWa = document.getElementById('btnWhatsApp');
+      const $consentBtn = document.getElementById('openConsent');
+
+      // Config destinataire (change l'email si nécessaire)
+      const TO_EMAIL = "contact@expertisediag.fr";
+
+      function showErr(name, msg){
+        const el = document.querySelector(`[data-err-for="${name}"]`);
+        if(el){ el.textContent = msg; el.classList.remove('hidden'); }
+      }
+      function clearErrs(){
+        document.querySelectorAll('[data-err-for]').forEach(e=>e.classList.add('hidden'));
+      }
+      function getVals(){
+        const data = new FormData($f);
+        return {
+          hp: (data.get('company')||'').toString().trim(),
+          fullName: (data.get('fullName')||'').toString().trim(),
+          phone: (data.get('phone')||'').toString().trim(),
+          email: (data.get('email')||'').toString().trim(),
+          city: (data.get('city')||'').toString().trim(),
+          propertyType: (data.get('propertyType')||'').toString().trim(),
+          context: (data.get('context')||'').toString().trim(),
+          diagnostics: Array.from($f.querySelectorAll('input[name="diagnostics"]:checked')).map(i=>i.value),
+          message: (data.get('message')||'').toString().trim(),
+          consent: data.get('consent') === 'on',
+        };
+      }
+      function validate(v){
+        clearErrs();
+        if (v.hp) return false; // bot
+        let ok = true;
+        if (v.fullName.length < 2){ showErr('fullName','Nom requis.'); ok = false; }
+        if (!/^[0-9+().\s-]{6,}$/.test(v.phone)){ showErr('phone','Téléphone invalide.'); ok = false; }
+        if (v.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)){ showErr('email','Email invalide.'); ok = false; }
+        if (v.message.length < 10){ showErr('message','Message requis (au moins 10 caractères).'); ok = false; }
+        if (!v.consent){ showErr('consent','Consentement requis.'); ok = false; }
+        return ok;
+      }
+      function buildText(v){
+        return [
+          "Demande de devis — Expertise Diag",
+          "",
+          `Nom: ${v.fullName}`,
+          `Téléphone: ${v.phone}`,
+          `Email: ${v.email || "—"}`,
+          `Ville: ${v.city || "—"}`,
+          `Type de bien: ${v.propertyType || "—"}`,
+          `Contexte: ${v.context || "—"}`,
+          `Diagnostics: ${v.diagnostics.join(", ") || "—"}`,
+          "",
+          "Message:",
+          v.message
+        ].join("\n");
+      }
+
+      // mailto
+      function submitMailto(v){
+        const subject = `Devis — ${v.fullName} (${v.context || "Sans contexte"})`;
+        const body = buildText(v);
+        const href = `mailto:${encodeURIComponent(TO_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        // Open the user's email client
+        window.location.href = href;
+      }
+
+      // WhatsApp
+      function submitWhatsApp(v){
+        const text = buildText(v);
+        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+
+      $f?.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const v = getVals();
+        if (!validate(v)) return;
+        $submit.disabled = true; $submit.textContent = "Ouverture de l’e-mail…";
+        try { submitMailto(v); } finally {
+          setTimeout(()=>{ $submit.disabled = false; $submit.textContent = "Envoyer par e-mail"; }, 1200);
+        }
+      });
+
+      $btnWa?.addEventListener('click', ()=>{
+        const v = getVals();
+        if (!validate(v)) return;
+        submitWhatsApp(v);
+      });
+
+      $consentBtn?.addEventListener('click', (e)=> {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('open-consent'));
+      });
+    })();
+  </script>
+</Layout>

@@ -1,0 +1,300 @@
+@import "tailwindcss";
+
+/* Accessibilité : focus visible (base) */
+:focus-visible {
+  outline: 2px solid #11114e;
+  outline-offset: 2px;
+}
+
+/* --- Drawer mobile & action bar --- */
+
+/* Hauteur de la barre d’actions mobile */
+:root {
+  --actionbar-h: 72px;
+}
+
+/* Empêcher tout débordement horizontal (évite le liseré blanc) */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Overlay global (masqué par défaut) */
+#drawerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: none; /* caché par défaut */
+}
+
+/* Quand ouvert, l'overlay s'affiche */
+#drawerOverlay.open {
+  display: block;
+}
+
+/* Fond grisé, limité à la zone au-dessus de la barre d’actions + safe-area iOS */
+#drawerOverlay.open::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: calc(var(--actionbar-h) + env(safe-area-inset-bottom));
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Panneau drawer (arrêté au-dessus de la barre + safe-area iOS) */
+#mobileDrawer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: calc(var(--actionbar-h) + env(safe-area-inset-bottom));
+  background: #11114e;
+  color: #fff;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  will-change: transform;
+}
+#mobileDrawer.open { transform: translateX(0); }
+
+/* Barre d’actions bas : pad pour le safe-area iOS */
+.actionbar-safe {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+/* ===== Responsive header (verrou simple & fiable) ===== */
+
+/* Par défaut : tout caché (nav desktop et actions tablette) */
+.nav-desktop { display: none; }
+.tablet-actions { display: none; }
+
+/* Tablette 768–999px : montrer actions tablette, cacher nav desktop */
+@media (min-width: 768px) and (max-width: 999px) {
+  .tablet-actions { display: flex; }
+  .nav-desktop { display: none; }
+}
+
+/* Desktop ≥ 1000px : montrer nav desktop, cacher actions tablette */
+@media (min-width: 1000px) {
+  .nav-desktop { display: flex; }
+  .tablet-actions { display: none; }
+}
+
+/* Header fixe : animation du "flash" court */
+#siteHeader { transform: translateY(0); transition: transform 150ms ease; will-change: transform; }
+#siteHeader.hide { transform: translateY(-100%); }
+
+/* Effet zoom sur les images des cartes diagnostics (image seule) */
+.card-figure { overflow: hidden; }               /* évite que l’image ne déborde */
+.card-figure img { transition: transform 300ms ease; transform-origin: center; }
+.card-figure:hover img { transform: scale(1.10); }
+
+/* ===== Utilitaires responsive fiables ===== */
+/* Desktop ≥1000px */
+@media (min-width: 1000px) {
+  .show-desktop { display: flex !important; }
+  .show-tablet  { display: none !important; }
+  .show-burger  { display: none !important; }
+}
+/* Tablette 768–999px */
+@media (min-width: 768px) and (max-width: 999px) {
+  .show-desktop { display: none !important; }
+  .show-tablet  { display: flex !important; }
+  .show-burger  { display: inline-flex !important; }
+}
+/* Mobile <768px */
+@media (max-width: 767px) {
+  .show-desktop { display: none !important; }
+  .show-tablet  { display: none !important; }
+  .show-burger  { display: inline-flex !important; }
+}
+
+/* Liens du footer : lisibles et accessibles sur fond sombre */
+.footer-link { color: rgba(255,255,255,.92); text-decoration: underline; }
+.footer-link:hover { color: #fff; text-decoration: none; }
+
+/* =========================
+   DESKTOP/TABLET — badge flottant bas-gauche (taille fixe)
+   ========================= */
+.cookie-fab {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 60;
+  width: 40px;           /* taille plus discrète */
+  height: 44px;
+  display: none;         /* caché en mobile */
+  place-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;   /* aucun fond = pas de plaque blanche */
+  cursor: pointer;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.18));
+}
+@media (min-width: 768px) { .cookie-fab { display: grid; } }
+
+/* Conteneur interne : on anime le CONTENEUR, pas chaque image,
+   pour éviter les conflits d'animations */
+.cookie-stack {
+  position: relative;
+  width: 40px;
+  height: 44px;
+  transition: transform 200ms ease;
+  will-change: transform;
+}
+.fab-shield,
+.fab-cookie {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  will-change: transform, filter;
+}
+.fab-cookie {
+  width: 50%;            /* cookie plus visible */
+  height: auto;
+  z-index: 2;            /* au-dessus du shield */
+}
+.fab-shield { z-index: 1; }
+
+/* Survol du COOKIE SEUL : il monte légèrement (reste dans le shield) */
+.cookie-fab .fab-cookie:hover {
+  transform: translate(-50%, calc(-50% - 3px));
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.16));
+}
+
+/* Survol du BOUTON (peu importe où) : le BLOC entier monte */
+.cookie-fab:hover .cookie-stack {
+  transform: translateY(-5px);
+}
+
+/* =========================
+   MOBILE — stack dans le bouton téléphone
+   ========================= */
+.btn-cookie-stack {
+  width: 35px;
+  height: 24px;          /* un peu plus grand pour la lisibilité */
+  position: relative;
+  display: inline-block;
+  transition: transform 180ms ease;
+  will-change: transform;
+}
+.btn-cookie-shield,
+.btn-cookie-chip {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  will-change: transform, filter;
+}
+.btn-cookie-chip {
+  width: 55%;            /* cookie bien lisible */
+  height: auto;
+  z-index: 2;
+}
+.btn-cookie-shield { z-index: 1; }
+
+/* Survol du cookie SEUL : petite montée */
+.btn-cookie-chip:hover {
+  transform: translate(-50%, calc(-50% - 2px));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.12));
+}
+
+/* Survol du lien téléphone : le stack (bouclier + cookie) monte un peu */
+a:hover .btn-cookie-stack {
+  transform: translateY(-3px);
+}
+
+/* Icône téléphone : éviter toute “coupe” visuelle */
+.actionbar-safe svg {
+  display: block;
+  position: relative;
+  top: 1px;
+  overflow: visible;
+}
+
+/* Accessibilité : réduire l’anim si demandé */
+@media (prefers-reduced-motion: reduce) {
+  .cookie-stack,
+  .fab-shield, .fab-cookie,
+  .btn-cookie-stack,
+  .btn-cookie-shield, .btn-cookie-chip { transition: none !important; }
+}
+
+/* Cacher le fab en mobile */
+@media (max-width: 767px) {
+  .cookie-fab { display: none !important; }
+}
+
+/* =========================================================
+   A11Y+ : ajouts non intrusifs (focus, utilitaires, contrastes)
+   ========================================================= */
+
+/* Focus visibles sur TOUS les éléments interactifs (cohérent) */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #11114e;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Focus renforcé sur fond sombre du footer */
+footer a.footer-link:focus-visible {
+  outline-color: #ffffff;
+  outline-offset: 3px;
+  text-decoration: none;
+}
+
+/* Utilitaire accessible : contenu visible pour lecteurs d’écran uniquement */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; /* empêche le retour à la ligne */
+}
+
+/* Respect fort de prefers-reduced-motion (global) */
+@media (prefers-reduced-motion: reduce) {
+  * , *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus visibles pour les badges cookies (desktop & mobile) */
+.cookie-fab:focus-visible,
+.btn-cookie-stack:focus-visible {
+  outline: 2px solid #11114e;
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+/* Mobile par défaut */
+.diag-spacer { height: 220px; }
+
+/* Entre 500px et 639px — transition légère */
+@media (min-width: 500px) {
+  .diag-spacer { height: 280px; }
+}
+
+/* Petite tablette — 640 à 767px */
+@media (min-width: 640px) {
+  .diag-spacer { height: 360px; }
+}
+
+/* Tablette moyenne — 768 à 1023px */
+@media (min-width: 768px) {
+  .diag-spacer { height: 200px; } /* réduit l'espace trop grand */
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .diag-spacer { height: 200px; }
+}

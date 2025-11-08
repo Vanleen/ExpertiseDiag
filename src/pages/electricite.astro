@@ -1,0 +1,31 @@
+
+---
+import DiagServicePage from "../components/DiagServicePage.astro";
+
+const pageTitle = "Diagnostic Électricité — État de l’installation | Expertise Diag";
+const description = "Diagnostic électricité : installations > 15 ans, vente/location, anomalies de sécurité. Intervention rapide en Île-de-France et alentours (89, 45, 28).";
+---
+<DiagServicePage
+  idBase="electricite"
+  pageTitle={pageTitle}
+  description={description}
+  stickyTitle="Diagnostic Électricité"
+  breadcrumbFull="Diagnostic Électricité — État de l’installation intérieure"
+  imgSrc="/img/diagnostics/electricite.svg"
+  imgAlt="Icône Diagnostic Électricité"
+  tags={["Installations > 15 ans","Vente","Location"]}
+  jsonLdName="Diagnostic Électricité"
+>
+  <div slot="cardIntro">
+    État de l’installation intérieure d’<strong>électricité</strong> de plus de <strong>15 ans</strong>, requis en <strong>vente</strong> et <strong>location</strong>.
+  </div>
+
+  <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Objectif</h2>
+  <p class="mt-3 text-gray-700 max-w-3xl">Identifier les anomalies susceptibles de compromettre la sécurité des occupants.</p>
+
+  <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Quand obligatoire&nbsp;?</h3>
+  <p class="mt-2 text-gray-700 max-w-3xl">Pour les biens avec installation de plus de 15 ans en <strong>vente</strong> et en <strong>location</strong>.</p>
+
+  <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Contenu</h3>
+  <p class="mt-2 text-gray-700 max-w-3xl">Vérifications visuelles et essais simples, repérage des défauts et <strong>préconisations de sécurité</strong>.</p>
+</DiagServicePage>

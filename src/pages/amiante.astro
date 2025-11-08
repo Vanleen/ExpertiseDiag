@@ -1,0 +1,32 @@
+---
+// src/pages/amiante.astro
+import DiagServicePage from "../components/DiagServicePage.astro";
+
+const pageTitle = "Diagnostic Amiante — Repérage amiante | Expertise Diag";
+const description = "Diagnostic amiante : biens concernés (avant 1997), vente et travaux, contenu du rapport. Intervention rapide en Île-de-France et alentours (89, 45, 28).";
+---
+<DiagServicePage
+  idBase="amiante"
+  pageTitle={pageTitle}
+  description={description}
+  stickyTitle="Diagnostic Amiante — Repérage amiante"
+  breadcrumbFull="Diagnostic Amiante — Repérage amiante"
+  imgSrc="/img/diagnostics/amiante.svg"
+  imgAlt="Icône Diagnostic Amiante"
+  tags={["Vente","Travaux","Avant 1997*"]}
+  jsonLdName="Diagnostic Amiante"
+>
+  <div slot="cardIntro">
+    Repérage des matériaux susceptibles de contenir de l’amiante pour les biens au permis
+    <strong>antérieur à 1997</strong>, en <strong>vente</strong> et avant <strong>travaux</strong>.
+  </div>
+
+  <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">À quoi sert&nbsp;?</h2>
+  <p class="mt-3 text-gray-700 max-w-3xl">Identifier les matériaux à risque et protéger occupants et intervenants.</p>
+
+  <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Quand obligatoire&nbsp;?</h3>
+  <p class="mt-2 text-gray-700 max-w-3xl">En <strong>vente</strong> et avant certains <strong>travaux</strong> si permis &lt; 1997.</p>
+
+  <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Contenu</h3>
+  <p class="mt-2 text-gray-700 max-w-3xl">Repérage listes A/B, résultats d’analyses si besoin, <strong>préconisations</strong>.</p>
+</DiagServicePage>
