@@ -1,9 +1,14 @@
-
 ---
+// src/pages/contact.astro
 import Layout from "../layouts/Base.astro";
+
 const pageTitle = "Demander un devis | Expertise Diag";
-const description = "Formulaire de demande de devis — front uniquement (mailto / WhatsApp).";
+const description = "Formulaire de demande de devis — envoi par e-mail (API) et partage WhatsApp.";
+
+// ⚠️ REMPLACE par TA **Site Key** hCaptcha (publique)
+const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
 ---
+
 <Layout title={pageTitle} description={description}>
   <style is:global>
     .devis-wrap{ min-height:calc(100vh - 0px); display:grid; place-items:center; padding:2rem 1rem; background:#f7f8fc; }
@@ -19,6 +24,8 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
     .btn-outline{ background:#fff; color:#11114E; border:1px solid rgba(0,0,0,.12); }
     .visually-hidden{ position:absolute !important; height:1px;width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
     .actions{ display:flex; flex-wrap:wrap; gap:.5rem; justify-content:space-between; align-items:center; }
+    .toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:20px; background:#11111b; color:#fff; padding:.75rem 1rem; border-radius:.6rem; box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:60; }
+    .toast.ok{ background:#0f766e; } .toast.err{ background:#991b1b; }
   </style>
 
   <section class="devis-wrap">
@@ -29,13 +36,12 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
       </div>
 
       <div class="devis-body">
-        <!-- Info mailto -->
         <div class="mb-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-blue-900">
-          L’envoi ouvre votre client e-mail avec les informations préremplies (aucune donnée n’est stockée côté serveur).
+          L’envoi utilise notre API sécurisée (aucune donnée n’est stockée durablement). Le captcha protège contre le spam.
         </div>
 
         <form id="devis-form" class="devis-grid" novalidate>
-          <!-- Honeypot (anti-bot) -->
+          <!-- Honeypot -->
           <div class="visually-hidden" aria-hidden="true">
             <label>Ne pas remplir ce champ
               <input type="text" name="company" tabindex="-1" autocomplete="off" />
@@ -53,7 +59,7 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
             <div>
               <label for="phone" class="block text-sm font-medium text-[#11114E]">Téléphone<span aria-hidden="true" class="text-red-600">*</span></label>
               <input id="phone" name="phone" type="tel" required inputmode="tel"
-                     pattern="^[0-9+().\s-]{6,}$" autocomplete="tel"
+                     pattern="[0-9()+.\- ]{6,}" autocomplete="tel"
                      class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. 07 45 68 76 54" />
               <p class="help">Nous vous rappelons rapidement.</p>
               <p data-err-for="phone" class="err hidden">Téléphone invalide.</p>
@@ -62,7 +68,7 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
 
           <div class="devis-grid devis-grid-2">
             <div>
-              <label for="email" class="block text-sm font-medium text-[#11114E]">Email</label>
+              <label for="email" class="block text-sm font-medium text-[#11114E]">Email (optionnel)</label>
               <input id="email" name="email" type="email" autocomplete="email"
                      class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. nom@domaine.fr" />
               <p data-err-for="email" class="err hidden">Email invalide.</p>
@@ -119,12 +125,21 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
             <p data-err-for="message" class="err hidden">Message requis (au moins 10 caractères).</p>
           </div>
 
+          <!-- hCaptcha -->
+          <div class="mt-1">
+            <div id="captchaBox"
+                 class="h-captcha"
+                 data-sitekey={HCAPTCHA_SITEKEY}>
+            </div>
+            <p data-err-for="captcha" class="err hidden mt-1">Veuillez valider le captcha.</p>
+          </div>
+
           <div class="rounded-md border border-[#11114E]/15 p-3 bg-[#F6F7FB]">
             <label class="inline-flex items-start gap-2 text-sm">
               <input id="consent" name="consent" type="checkbox" required />
               <span>J’accepte que mes données soient utilisées pour traiter ma demande, conformément à la <a href="/confidentialite" class="underline">Politique de confidentialité</a>. *</span>
             </label>
-            <p class="help mt-1">Vous pouvez modifier vos préférences à tout moment depuis «&nbsp;Confidentialité &amp; Cookies&nbsp;».</p>
+            <p class="help mt-1">Vous pouvez modifier vos préférences à tout moment depuis « Confidentialité & Cookies ».</p>
             <p data-err-for="consent" class="err hidden">Consentement requis.</p>
           </div>
 
@@ -133,7 +148,6 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
             <div class="flex items-center gap-2">
               <a href="/" class="btn btn-outline">Annuler</a>
               <button id="btnWhatsApp" type="button" class="btn btn-outline" title="Envoyer via WhatsApp" aria-label="Envoyer via WhatsApp">
-                <!-- Icône WhatsApp -->
                 <svg viewBox="0 0 32 32" width="18" height="18" fill="none" aria-hidden="true">
                   <path d="M16.04 3.2c-6.97 0-12.64 5.66-12.64 12.64 0 2.22.59 4.31 1.62 6.11L3.2 28.8l7.02-1.77c1.72.94 3.69 1.47 5.82 1.47 6.97 0 12.64-5.66 12.64-12.64S23.01 3.2 16.04 3.2Z" stroke="#11114E" stroke-width="1.5"/>
                   <path d="M11.7 10.5c-.2-.44-.41-.45-.6-.45h-.52c-.18 0-.47.07-.72.35-.25.28-.95.92-.95 2.25s.98 2.61 1.12 2.79c.14.18 1.89 3.02 4.61 4.11 2.28.9 2.74.72 3.24.67.5-.05 1.59-.65 1.81-1.27.22-.62.22-1.15.16-1.27-.07-.12-.25-.2-.52-.35-.27-.15-1.59-.79-1.84-.88-.25-.09-.43-.14-.61.14-.18.29-.7.88-.86 1.06-.16.18-.32.2-.59.05-.27-.15-1.15-.42-2.2-1.33-.81-.72-1.35-1.6-1.51-1.87-.16-.27-.02-.42.12-.56.13-.13.29-.34.43-.51.14-.18.18-.29.27-.49.09-.2.05-.37-.02-.52-.07-.15-.56-1.34-.77-1.83Z" fill="#25D366"/>
@@ -144,22 +158,32 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
             </div>
           </div>
 
-          <p class="help mt-2">* Champs obligatoires. Aucun enregistrement côté serveur.</p>
+          <p class="help mt-2">* Champs obligatoires.</p>
         </form>
       </div>
     </div>
   </section>
 
+  <!-- hCaptcha script -->
+  <script src="https://hcaptcha.com/1/api.js" async defer></script>
+
   <script is:inline>
     (function(){
+      // ⚠️ Toujours utiliser l’API Vercel (CORS déjà autorisé côté serveur)
+      const API_URL = "https://expertisediag-mail-api.vercel.app/api/send-devis";
+
       const $f = document.getElementById('devis-form');
       const $submit = document.getElementById('submitBtn');
       const $btnWa = document.getElementById('btnWhatsApp');
       const $consentBtn = document.getElementById('openConsent');
 
-      // Config destinataire (change l'email si nécessaire)
-      const TO_EMAIL = "contact@expertisediag.fr";
-
+      function toast(msg, ok=false){
+        const t = document.createElement('div');
+        t.className = 'toast ' + (ok ? 'ok':'err');
+        t.textContent = msg;
+        document.body.appendChild(t);
+        setTimeout(()=>{ t.remove(); }, 2600);
+      }
       function showErr(name, msg){
         const el = document.querySelector(`[data-err-for="${name}"]`);
         if(el){ el.textContent = msg; el.classList.remove('hidden'); }
@@ -187,10 +211,13 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
         if (v.hp) return false; // bot
         let ok = true;
         if (v.fullName.length < 2){ showErr('fullName','Nom requis.'); ok = false; }
-        if (!/^[0-9+().\s-]{6,}$/.test(v.phone)){ showErr('phone','Téléphone invalide.'); ok = false; }
+        if (!/[0-9()+.\- ]{6,}/.test(v.phone)){ showErr('phone','Téléphone invalide.'); ok = false; }
         if (v.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)){ showErr('email','Email invalide.'); ok = false; }
         if (v.message.length < 10){ showErr('message','Message requis (au moins 10 caractères).'); ok = false; }
         if (!v.consent){ showErr('consent','Consentement requis.'); ok = false; }
+        // Captcha présent ?
+        const token = window.hcaptcha?.getResponse?.() || '';
+        if (!token){ showErr('captcha','Veuillez valider le captcha.'); ok = false; }
         return ok;
       }
       function buildText(v){
@@ -209,41 +236,61 @@ const description = "Formulaire de demande de devis — front uniquement (mailto
           v.message
         ].join("\n");
       }
-
-      // mailto
-      function submitMailto(v){
-        const subject = `Devis — ${v.fullName} (${v.context || "Sans contexte"})`;
-        const body = buildText(v);
-        const href = `mailto:${encodeURIComponent(TO_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        // Open the user's email client
-        window.location.href = href;
-      }
-
-      // WhatsApp
       function submitWhatsApp(v){
         const text = buildText(v);
         const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
         window.open(url, "_blank", "noopener,noreferrer");
       }
 
-      $f?.addEventListener('submit', (e)=>{
+      async function sendToApi(v){
+        const payload = {
+          company: v.hp,
+          fullName: v.fullName,
+          phone: v.phone,
+          email: v.email,
+          city: v.city,
+          propertyType: v.propertyType,
+          context: v.context,
+          diagnostics: v.diagnostics,
+          message: v.message,
+          hcaptchaToken: window.hcaptcha?.getResponse?.() || ''
+        };
+        const r = await fetch(API_URL, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        return r.json();
+      }
+
+      $f?.addEventListener('submit', async (e)=>{
         e.preventDefault();
         const v = getVals();
         if (!validate(v)) return;
-        $submit.disabled = true; $submit.textContent = "Ouverture de l’e-mail…";
-        try { submitMailto(v); } finally {
-          setTimeout(()=>{ $submit.disabled = false; $submit.textContent = "Envoyer par e-mail"; }, 1200);
+        $submit.disabled = true; $submit.textContent = "Envoi…";
+        try {
+          const res = await sendToApi(v);
+          if (res?.ok){ toast("Votre demande a bien été envoyée. Merci !", true); $f.reset(); window.hcaptcha?.reset?.(); }
+          else {
+            const m = res?.error === 'captcha_failed' ? "Captcha invalide. Merci de réessayer."
+              : res?.error === 'smtp_config' ? "API indisponible (configuration)."
+              : "Échec de l’envoi. Merci de réessayer.";
+            toast(m, false);
+          }
+        } catch {
+          toast("Erreur réseau, merci de réessayer.", false);
+        } finally {
+          $submit.disabled = false; $submit.textContent = "Envoyer par e-mail";
         }
       });
 
       $btnWa?.addEventListener('click', ()=>{
         const v = getVals();
-        if (!validate(v)) return;
+        if (!validate(v)) return; // on exige aussi le captcha pour WA (cohérence anti-spam)
         submitWhatsApp(v);
       });
 
-      $consentBtn?.addEventListener('click', (e)=> {
-        e.preventDefault();
+      $consentBtn?.addEventListener('click', (ev)=> {
+        ev.preventDefault();
         window.dispatchEvent(new CustomEvent('open-consent'));
       });
     })();
