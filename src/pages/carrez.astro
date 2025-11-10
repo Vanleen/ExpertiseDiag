@@ -16,12 +16,36 @@ const description = "Loi Carrez : surface privative des lots de copropriété (v
   jsonLdName="Mesurage Loi Carrez"
 >
   <div slot="cardIntro">
-    Mesure la <strong>surface privative</strong> des lots de copropriété pour les ventes (obligatoire).
+    Mesure la surface privative des lots de copropriété pour les ventes (obligatoire).
   </div>
 
+  <!-- Objectif -->
   <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Objectif</h2>
-  <p class="mt-3 text-gray-700 max-w-3xl">Sécuriser la transaction et éviter les litiges sur la surface du lot.</p>
+  <p class="mt-3 text-gray-700 max-w-3xl">
+    Garantir une surface privative exacte pour sécuriser la transaction, éviter les litiges et
+    permettre une fixation de prix cohérente avec la réalité du bien.
+  </p>
+  <ul class="mt-3 text-gray-700 max-w-3xl list-disc pl-5 space-y-1">
+    <li>Fournir une attestation de mesurage opposable, annexée au compromis et à l’acte.</li>
+    <li>Éviter les contestations : si la surface réelle est inférieure de plus de 5&nbsp;%à celle indiquée, l’acquéreur peut demander une réduction proportionnelle du prix (dans l’année qui suit la vente).</li>
+    <li>Assurer la transparence pour toutes les parties (vendeur, acquéreur, notaire).</li>
+  </ul>
 
+  <!-- Périmètre -->
   <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Périmètre</h3>
-  <p class="mt-2 text-gray-700 max-w-3xl">Exclut certaines surfaces (cloisons, caves, garages…) selon les règles <strong>Carrez</strong>.</p>
+  <p class="mt-2 text-gray-700 max-w-3xl">
+    La surface Carrez correspond à la superficie des planchers des locaux clos et couverts, après déduction
+    des éléments non pris en compte. Seules les parties avec hauteur &gt; 1,80&nbsp;m sont incluses.
+  </p>
+  <ul class="mt-2 text-gray-700 max-w-3xl list-disc pl-5 space-y-1">
+    <li>Inclus : pièces privatives closes et couvertes &gt; 1,80&nbsp;m ; vérandas privatives closes (selon cas) ; placards intégrés dans le volume.</li>
+    <li>Exclus : murs, cloisons, marches, cages d’escalier, gaines, embrasures de portes/fenêtres ; volumes &lt; 1,80&nbsp;m ; caves, garages, parkings, balcons, terrasses, jardins et annexes non closes/couvertes.</li>
+    <li>Seuil : les lots ou fractions de lots &lt; 8&nbsp;m² ne sont pas soumis à la Carrez.</li>
+  </ul>
+  <p class="mt-2 text-gray-700 max-w-3xl">
+    Le mesurage est réalisé au télémètre laser pièce par pièce, avec relevés précis. Le document remis
+    comporte l’attestation Carrez et, si utile, un croquis/plan schématique. L’attestation n’a pas de
+    durée limite mais doit être refaite en cas de travaux modifiant la consistance (cloisonnement,
+    agrandissement, aménagement de combles…).
+  </p>
 </DiagServicePage>
