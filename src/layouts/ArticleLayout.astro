@@ -1,0 +1,249 @@
+---
+import Layout from "./Base.astro";
+
+export interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    date: Date | string;
+    updated?: Date | string;
+    cover?: string;
+    tags?: string[];
+  };
+  breadcrumbTitle?: string;
+  sharePath?: string;
+}
+
+const {
+  frontmatter,
+  breadcrumbTitle = "Articles",
+  sharePath = Astro.url.pathname,
+} = Astro.props;
+
+const pageTitle = `${frontmatter.title} | Expertise Diag`;
+const description = frontmatter.description ?? "";
+
+// Dates robustes
+const iso = (d: unknown) =>
+  (d instanceof Date ? d : new Date(d as any))?.toISOString?.() ?? "";
+const isoDate = iso(frontmatter.date);
+const isoUpd  = frontmatter.updated ? iso(frontmatter.updated) : isoDate;
+
+// URL absolue pour le partage
+const origin = (Astro.site?.toString?.() as string) || Astro.url.origin;
+const absolute = new URL(sharePath || Astro.url.pathname, origin).toString();
+const waHref = `https://wa.me/?text=${encodeURIComponent(`${frontmatter.title} — ${absolute}`)}`;
+---
+
+<Layout title={pageTitle} description={description}>
+  <style is:global>
+    #siteHeader { border-bottom: 0 !important; }
+
+    /* --- BREADCRUMB sticky --- */
+    .sticky-crumb{
+      position:fixed; left:0; right:0; top:var(--hdr-top,72px);
+      z-index:45; background:#F3F4F8; border-bottom:1px solid rgba(0,0,0,.08);
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
+      opacity:0; transform:translateY(-8px);
+      transition:opacity .18s ease-out, transform .18s ease-out;
+      pointer-events:none;
+    }
+    .sticky-crumb.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+    .sticky-crumb.hidden{ opacity:0; transform:translateY(-8px); pointer-events:none; }
+    .sticky-crumb .row{ max-width:72rem; margin:0 auto; padding:.6rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+    .sticky-crumb .title{ font-weight:600; color:#11114E; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sticky-crumb .btn{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid rgba(0,0,0,.12); border-radius:.5rem; padding:.45rem .65rem; background:#fff; color:#11114E; font-size:.9rem; }
+    .sticky-crumb .btn svg{ width:18px; height:18px; }
+    .sticky-crumb .btn span{ display:none; }
+    @media (min-width:640px){ .sticky-crumb .btn span{ display:inline; } }
+
+    /* --- PROSE (rendu Markdown) --- */
+    .prose :where(h2){ margin-top:1.6em; margin-bottom:.6em; color:#11114E; font-weight:800; }
+    .prose :where(h3){ margin-top:1.4em; margin-bottom:.5em; color:#11114E; font-weight:700; }
+    .prose :where(p){ margin:.9em 0; line-height:1.75; color:#374151; }
+    .prose :where(ul){ list-style:disc; padding-left:1.4rem; margin:.6rem 0 .8rem; }
+    .prose :where(ol){ list-style:decimal; padding-left:1.4rem; margin:.6rem 0 .8rem; }
+    .prose :where(li){ margin:.25rem 0; }
+    .prose :where(a){ color:#11114E; text-decoration:underline; text-underline-offset:3px; }
+    .prose :where(a:hover){ opacity:.85; }
+    /* pas de gras global dans le corps */
+    .prose :where(p strong, li strong){ font-weight:500; color:inherit; }
+    /* FAQ en gras */
+    .prose :where(details > summary){ font-weight:700; color:#11114E; cursor:pointer; }
+
+    /* --- Responsive breadcrumb extra spacing (évite le collage en mobile) --- */
+    nav.breadcrumbs{ padding-bottom: .75rem; }              /* + espace par défaut */
+    @media (min-width:640px){ nav.breadcrumbs{ padding-bottom: .5rem; } }
+  </style>
+
+  <!-- HERO bleu + fil d’Ariane -->
+  <section class="relative bg-[#11114E] overflow-visible">
+    <div class="max-w-6xl mx-auto px-6 relative">
+      <nav
+  aria-label="Fil d’Ariane"
+  class="breadcrumbs relative z-[2] text-sm text-white/90 pt-4 pb-3 sm:pb-2"
+>
+  <a href="/" class="underline underline-offset-4 hover:no-underline">Accueil</a>
+  <span class="mx-2" aria-hidden="true">›</span>
+  <a href="/articles" class="underline underline-offset-4 hover:no-underline">Articles</a>
+  <span class="mx-2" aria-hidden="true">›</span>
+  <span class="opacity-90">{frontmatter.title}</span>
+</nav>
+<!-- spacer mobile pour décoller la carte -->
+<div class="h-2 md:hidden" aria-hidden="true"></div>
+
+      <div id="article-hero" aria-hidden="true" class="h-[440px] md:h-[500px]"></div>
+
+      <!-- Carte chevauchante -->
+      <div
+        id="article-card"
+        class="absolute left-1/2 -translate-x-1/2 top-20 md:top-16
+               w-[1140px] max-w-[92vw]
+               bg-[#F3F4F8] rounded-xl md:rounded-2xl shadow-sm
+               p-6 sm:p-8 md:p-10
+               z-[1]">
+
+        <div class="flex flex-col md:flex-row items-center gap-6 md:gap-10 lg:gap-14">
+          {frontmatter.cover && (
+            <div class="w-full md:w-5/12 flex justify-center">
+              <img
+                src={frontmatter.cover}
+                alt=""
+                class="w-[82%] sm:w-[74%] md:w-full max-w-[440px]"
+                loading="lazy" decoding="async"
+              />
+            </div>
+          )}
+
+          <div class="w-full md:w-7/12 min-w-0 flex flex-col gap-3 md:gap-4">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#11114E] leading-tight">
+              {frontmatter.title}
+            </h1>
+            {description && (
+              <p class="text-base sm:text-lg text-[#11114E]/90">
+                {description}
+              </p>
+            )}
+            <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-[#11114E]/80">
+              <time datetime={isoDate}>Publié le {new Date(isoDate).toLocaleDateString("fr-FR")}</time>
+              <span aria-hidden="true">•</span>
+              <time datetime={isoUpd}>MAJ {new Date(isoUpd).toLocaleDateString("fr-FR")}</time>
+             {frontmatter.tags?.length ? (
+  <>
+    <span aria-hidden="true">•</span>
+    {frontmatter.tags.map((t) => (
+      <a href={`/articles/tags/${encodeURIComponent(t)}`} class="underline">{t}</a>
+    ))}
+  </>
+) : null}
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- spacer -->
+  <div id="article-spacer" aria-hidden="true" class="diag-spacer"></div>
+
+  <!-- Sticky breadcrumb -->
+  <div id="crumb-sticky" class="sticky-crumb" aria-hidden="true">
+    <div class="row">
+  <div class="title">{frontmatter.title}</div>
+  <a href={waHref} class="btn-wa" aria-label="Partager sur WhatsApp">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <path d="M16.04 3.2c-6.97 0-12.64 5.66-12.64 12.64 0 2.22.59 4.31 1.62 6.11L3.2 28.8l7.02-1.77c1.72.94 3.69 1.47 5.82 1.47 6.97 0 12.64-5.66 12.64-12.64S23.01 3.2 16.04 3.2Z" stroke="#11114E" stroke-width="1.5"/>
+      <path d="M11.7 10.5c-.2-.44-.41-.45-.6-.45h-.52c-.18 0-.47.07-.72.35-.25.28-.95.92-.95 2.25s.98 2.61 1.12 2.79c.14.18 1.89 3.02 4.61 4.11 2.28.9 2.74.72 3.24.67.5-.05 1.59-.65 1.81-1.27.22-.62.22-1.15.16-1.27-.07-.12-.25-.2-.52-.35-.27-.15-1.59-.79-1.84-.88-.25-.09-.43-.14-.61.14-.18.29-.7.88-.86 1.06-.16.18-.32.2-.59.05-.27-.15-1.15-.42-2.2-1.33-.81-.72-1.35-1.6-1.51-1.87-.16-.27-.02-.42.12-.56.13-.13.29-.34.43-.51.14-.18.18-.29.27-.49.09-.2.05-.37-.02-.52-.07-.15-.56-1.34-.77-1.83Z" fill="#25D366"/>
+    </svg>
+  </a>
+</div>
+
+  </div>
+
+  <!-- CONTENU : modal -->
+  <section class="bg-white">
+    <div class="px-6 py-10 md:py-14 max-w-4xl mx-auto">
+      <article class="prose prose-slate mx-auto bg-white rounded-2xl shadow-2xl border border-black/5 px-5 sm:px-8 md:px-10 py-6 sm:py-8 md:py-10">
+        <slot />
+      </article>
+    </div>
+  </section>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": frontmatter.title,
+      "datePublished": isoDate,
+      "dateModified": isoUpd,
+      "image": frontmatter.cover ? new URL(frontmatter.cover, origin).toString() : undefined,
+      "author": { "@type": "Organization", "name": "Expertise Diag" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Expertise Diag",
+        "logo": { "@type":"ImageObject","url": new URL("/logo1.svg", origin).toString() }
+      },
+      "description": description
+    })}
+  </script>
+
+  <!-- JS : spacer + sticky + masquage pendant burger -->
+  <script is:inline>
+    (function(){
+      const header  = document.getElementById('siteHeader');
+      const hero    = document.getElementById('article-hero');
+      const card    = document.getElementById('article-card');
+      const spacer  = document.getElementById('article-spacer');
+      const sticky  = document.getElementById('crumb-sticky');
+      const overlay = document.getElementById('drawerOverlay');
+      const menuBtn = document.getElementById('menuBtn');
+
+      function syncTop(){ sticky?.style.setProperty('--hdr-top', (header?.offsetHeight || 72) + 'px'); }
+      function syncSpacer(){
+  if(!hero || !card || !spacer) return;
+  const heroH = hero.offsetHeight;
+  const top   = parseFloat(getComputedStyle(card).top) || 0;
+  const h     = card.offsetHeight;
+
+  // Gaps plus compacts
+  const baseGap = window.innerWidth < 640 ? 8 : 10;  // était ~18/20
+  const minGap  = 4;
+
+  // Permet de tirer la carte VERS LE HAUT si besoin (valeur négative)
+  const extra = parseFloat(getComputedStyle(spacer).getPropertyValue('--gap-extra')) || 0;
+
+  const needed = Math.max(minGap, (top + h) - heroH + baseGap + extra);
+  spacer.style.height = needed + 'px';
+}
+
+      function onScroll(){
+        if (!sticky || sticky.classList.contains('hidden')) return;
+        if (scrollY > 10) sticky.classList.add('show'); else sticky.classList.remove('show');
+      }
+      function isMenuOpen(){
+        const expanded = menuBtn?.getAttribute('aria-expanded') === 'true';
+        const ov = overlay && overlay.style.display !== 'none';
+        return !!(expanded || ov);
+      }
+      function applyMenuState(){
+        if (isMenuOpen()){ sticky?.classList.add('hidden'); sticky?.classList.remove('show'); }
+        else { sticky?.classList.remove('hidden'); onScroll(); }
+      }
+      function init(){ syncTop(); syncSpacer(); onScroll(); applyMenuState(); }
+      init();
+
+      addEventListener('resize', ()=>{ syncTop(); syncSpacer(); }, { passive:true });
+      addEventListener('scroll', onScroll, { passive:true });
+
+      document.fonts?.ready?.then(syncSpacer).catch(()=>{});
+      if ('ResizeObserver' in window && card){ new ResizeObserver(syncSpacer).observe(card); }
+      if (overlay && 'MutationObserver' in window){ new MutationObserver(applyMenuState).observe(overlay,{attributes:true,attributeFilter:['style','class']}); }
+      if (menuBtn){
+        if ('MutationObserver' in window){ new MutationObserver(applyMenuState).observe(menuBtn,{attributes:true,attributeFilter:['aria-expanded','class']}); }
+        menuBtn.addEventListener('click', ()=> setTimeout(applyMenuState,0));
+      }
+    })();
+  </script>
+</Layout>

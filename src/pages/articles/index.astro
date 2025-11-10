@@ -1,0 +1,98 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Layout from "../../layouts/Base.astro";
+
+type ArticleEntry = CollectionEntry<"articles">;
+
+// 1) Slugs (si tu les connais, garde-les ici)
+const containSlugs = new Set<string>([
+  // mets ici les slugs exacts si tu les as (sinon la logique "titre" en 2) prendra le relais)
+  "vendre-louer-mon-bien-guide-2025",
+  "renover-mon-bien-guide-2025",
+  "etat-des-lieux-guide-2025",
+  "bilan-consommation-energetique-guide-2025",
+]);
+
+// 2) Mots-clés robustes sur le TITRE (fonctionne même si les slugs ne correspondent pas)
+const containTitleMatchers = [
+  "vendre ou louer mon bien",
+  "rénover mon bien",
+  "etat des lieux",             // sans accent ni apostrophe, on normalise plus bas
+  "bilan de ma consommation énergétique",
+];
+
+function normalize(str: string) {
+  return (str || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, ""); // supprime les accents pour matcher plus large
+}
+
+function needsContain(slug: string, title: string) {
+  if (containSlugs.has(slug)) return true;
+  const nt = normalize(title);
+  return containTitleMatchers.some((frag) => nt.includes(normalize(frag)));
+}
+
+const articles = (await getCollection(
+  "articles",
+  (e: ArticleEntry) => !e.data.draft
+)).sort((a: ArticleEntry, b: ArticleEntry) => {
+  return (b.data.date?.getTime?.() ?? 0) - (a.data.date?.getTime?.() ?? 0);
+});
+
+const pageTitle = "Articles — Expertise Diag";
+const description = "Guides diagnostics immobiliers (DPE, amiante, électricité, etc.).";
+---
+
+<Layout title="Articles | Expertise Diag" description="Guides & conseils diagnostics immobiliers.">
+  <section class="max-w-6xl mx-auto px-6 py-12">
+    <h1 class="text-3xl font-bold text-[#11114E]">Articles</h1>
+
+    <div class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {articles.map(({ slug, data }) => {
+        const useContain = needsContain(slug, data.title || "");
+        // pour aligner la grille : on garde un conteneur ratio 16/9 ;
+        // pour "contain" on ajoute padding pour éviter que le SVG touche les bords.
+        const fitClass = useContain ? "object-contain p-4" : "object-cover";
+        return (
+          <a
+            href={`/articles/${slug}`}
+            class="block rounded-xl border border-[#11114E]/10 bg-white hover:shadow-md transition"
+          >
+            {data.cover && (
+              <div class="rounded-t-xl overflow-hidden aspect-[16/9] bg-white">
+                <img
+                  src={data.cover}
+                  alt={data.title}
+                  loading="lazy"
+                  decoding="async"
+                  class={`w-full h-full ${fitClass}`}
+                  style="object-position:center;"
+                />
+              </div>
+            )}
+
+            <div class="p-4">
+              <h2 class="font-semibold text-[#11114E]">{data.title}</h2>
+
+              {data.date && (
+                <p class="text-sm text-gray-600 mt-1">
+                  {new Date(data.date).toLocaleDateString("fr-FR")}
+                </p>
+              )}
+
+              {data.description && (
+                <p class="text-sm text-gray-700 mt-2 line-clamp-3">{data.description}</p>
+              )}
+
+              <span class="mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#FF7B00]">
+                Lire la suite <span aria-hidden="true">→</span>
+              </span>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+</Layout>

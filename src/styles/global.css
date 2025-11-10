@@ -6,6 +6,49 @@
   outline-offset: 2px;
 }
 
+/* Skip link : caché par défaut, visible au focus SEULEMENT */
+.skip-link{
+  position:absolute !important;
+  left:-9999px !important; top:auto !important;
+  width:1px !important; height:1px !important;
+  overflow:hidden !important; clip:rect(1px,1px,1px,1px) !important;
+  white-space:nowrap !important; z-index:10000;
+}
+.skip-link:focus{
+  left:12px !important; top:12px !important; width:auto !important; height:auto !important;
+  clip:auto !important; padding:10px 14px !important;
+  background:#11114E !important; color:#fff !important; border-radius:8px !important;
+  outline:2px solid #fff !important; outline-offset:2px !important;
+}
+
+
+/* Espace sous le fil d’Ariane sur mobile pour éviter qu'il colle à la carte */
+nav.breadcrumbs {
+  margin-bottom: 0.5rem; /* desktop/tablette */
+}
+@media (max-width: 640px) {
+  nav.breadcrumbs {
+    margin-bottom: 1.1rem !important; /* force en mobile */
+  }
+}
+
+/* Pastille WhatsApp plus visible */
+.sticky-crumb .btn-wa{
+  display:inline-grid; place-items:center;
+  width:44px; height:44px; border-radius:9999px;
+  background:#fff; border:1px solid rgba(0,0,0,.12);
+  box-shadow:0 6px 16px rgba(0,0,0,.18);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.sticky-crumb .btn-wa svg{ width:22px; height:22px; }
+.sticky-crumb .btn-wa:hover{ transform:translateY(-1px); box-shadow:0 10px 24px rgba(0,0,0,.22); }
+@media (min-width:768px){
+  .sticky-crumb .btn-wa{ width:48px; height:48px; }
+  .sticky-crumb .btn-wa svg{ width:24px; height:24px; }
+}
+
+
+
 /* --- Drawer mobile & action bar --- */
 
 /* Hauteur de la barre d’actions mobile */
@@ -277,24 +320,28 @@ footer a.footer-link:focus-visible {
   border-radius: 10px;
 }
 /* Mobile par défaut */
-.diag-spacer { height: 220px; }
+.diag-spacer { height: 150px; }
 
-/* Entre 500px et 639px — transition légère */
+/* 500–639px */
 @media (min-width: 500px) {
-  .diag-spacer { height: 280px; }
+  .diag-spacer { height: 200px; }
 }
 
 /* Petite tablette — 640 à 767px */
 @media (min-width: 640px) {
-  .diag-spacer { height: 360px; }
+  .diag-spacer { height: 240px; }
 }
 
-/* Tablette moyenne — 768 à 1023px */
+/* Tablette ≥768px */
 @media (min-width: 768px) {
-  .diag-spacer { height: 200px; } /* réduit l'espace trop grand */
+  .diag-spacer { height: 160px; }
 }
 
-/* Desktop */
+/* Desktop ≥1024px */
 @media (min-width: 1024px) {
-  .diag-spacer { height: 200px; }
+  .diag-spacer { height: 150px; }
 }
+
+
+.readmore { color:#FF7B00; font-weight:600; }
+.readmore:hover { text-decoration: underline; }

@@ -1,0 +1,25 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import ArticleLayout from "../../layouts/ArticleLayout.astro";
+
+// Génère les pages /articles/<slug>
+export async function getStaticPaths() {
+  const entries = await getCollection("articles", (e) => !e.data.draft);
+  return entries.map((e) => ({
+    params: { slug: e.slug },
+    props: { entry: e },
+  }));
+}
+
+type ArticleEntry = CollectionEntry<"articles">;
+const { entry } = Astro.props as { entry: ArticleEntry };
+
+// ✅ render() fournit seulement le composant Content
+const { Content } = await entry.render();
+// ✅ le front-matter est sur entry.data
+const data = entry.data;
+---
+
+<ArticleLayout frontmatter={data} sharePath={Astro.url.pathname}>
+  <Content />
+</ArticleLayout>
