@@ -16,12 +16,35 @@ const description = "Loi Boutin : surface habitable à mentionner dans tout bail
   jsonLdName="Mesurage Loi Boutin"
 >
   <div slot="cardIntro">
-    Calcule la <strong>surface habitable</strong> à indiquer dans tout bail d’habitation (location).
+    Calcule la surface habitable à indiquer dans tout bail d’habitation (location).
   </div>
 
   <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Objectif</h2>
-  <p class="mt-3 text-gray-700 max-w-3xl">Assurer la <strong>transparence</strong> locataire et la conformité du bail.</p>
+  <p class="mt-3 text-gray-700 max-w-3xl">
+    Garantir une information loyale au locataire et un bail conforme : la surface habitable sert de base au loyer,
+    à la comparaison des biens et à la transparence contractuelle. Un mesurage précis réduit les litiges.
+  </p>
+  <p class="mt-2 text-gray-700 max-w-3xl">
+    La surface habitable correspond aux surfaces de plancher des pièces de vie, après déduction des murs, cloisons,
+    marches, cages d’escalier, gaines, embrasures de portes et fenêtres, ainsi que de toute partie dont la hauteur
+    sous plafond est inférieure à 1,80 m. Sont exclus notamment : caves, sous-sols, garages, parkings, combles non
+    aménagés, balcons, terrasses et vérandas non chauffées.
+  </p>
+  <ul class="mt-2 text-gray-700 max-w-3xl list-disc pl-5 space-y-1">
+    <li>Obligatoire pour les locations nues à usage de résidence principale.</li>
+    <li>En cas d’erreur supérieure à 5 %, le locataire peut demander une diminution proportionnelle du loyer.</li>
+    <li>Recommandé de refaire le mesurage après des travaux modifiant la configuration (cloisons, combles, extensions).</li>
+  </ul>
 
   <h3 class="mt-8 text-xl md:text-2xl font-semibold text-[#11114E]">Différence Carrez/Boutin</h3>
-  <p class="mt-2 text-gray-700 max-w-3xl">La logique de calcul diffère de la <strong>Loi Carrez</strong> (vente) ; périmètres non identiques.</p>
+  <p class="mt-2 text-gray-700 max-w-3xl">
+    Les deux règles n’ont pas le même objectif ni le même périmètre. Carrez s’applique aux ventes en copropriété et
+    mesure une surface privative juridique ; Boutin concerne la location et mesure la surface habitable destinée à la vie
+    quotidienne. Les pièces et annexes prises en compte peuvent donc différer.
+  </p>
+  <ul class="mt-2 text-gray-700 max-w-3xl list-disc pl-5 space-y-1">
+    <li>Carrez inclut certaines vérandas ou volumes privatifs clos et couverts ; Boutin exclut les annexes non habitables.</li>
+    <li>Carrez ne s’applique pas aux maisons individuelles hors copropriété ; Boutin s’applique au bail d’habitation vide.</li>
+    <li>Un même logement peut avoir une surface Carrez et une surface Boutin différentes sans que ce soit une erreur.</li>
+  </ul>
 </DiagServicePage>
