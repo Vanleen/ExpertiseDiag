@@ -1,0 +1,245 @@
+---
+/* src/pages/zones.astro */
+import Layout from "../layouts/Base.astro";
+
+const pageTitle = "Zones d’intervention — Expertise Diag";
+const description =
+  "Zones d’intervention : Île-de-France et départements limitrophes (89, 45, 28). Interventions rapides sous 24–48h.";
+---
+
+<Layout title={pageTitle} description={description}>
+  <style is:global>
+    #siteHeader { border-bottom: 0 !important; }
+
+    /* Sticky compact + apparition douce */
+    .sticky-crumb{
+      position:fixed; left:0; right:0; top:var(--hdr-top,72px);
+      z-index:45; background:#F3F4F8; border-bottom:1px solid rgba(0,0,0,.08);
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
+      opacity:0; transform:translateY(-8px);
+      transition:opacity .18s ease-out, transform .18s ease-out;
+      pointer-events:none;
+    }
+    .sticky-crumb.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+    .sticky-crumb.hidden{ opacity:0; transform:translateY(-8px); pointer-events:none; }
+    .sticky-crumb .row{ max-width:72rem; margin:0 auto; padding:.6rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+    .sticky-crumb .title{ font-weight:600; color:#11114E; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sticky-crumb .btn{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid rgba(0,0,0,.12); border-radius:.5rem; padding:.45rem .65rem; background:#fff; color:#11114E; font-size:.9rem; }
+    .sticky-crumb .btn svg{ width:18px; height:18px; }
+    .sticky-crumb .btn span{ display:none; }
+    @media (min-width:640px){ .sticky-crumb .btn span{ display:inline; } }
+  </style>
+
+  <!-- HERO bleu + fil d’Ariane -->
+  <section class="relative bg-[#11114E] overflow-visible">
+    <div class="max-w-6xl mx-auto px-6 relative">
+      <nav aria-label="Fil d’Ariane"
+           class="relative z-[2] text-sm text-white/90 pt-4 pb-2">
+        <a href="/" class="underline underline-offset-4 hover:no-underline">Accueil</a>
+        <span class="mx-2" aria-hidden="true">›</span>
+        <span class="opacity-90">Zones d’intervention</span>
+      </nav>
+
+      <div id="zones-hero" aria-hidden="true" class="h-[440px] md:h-[500px]"></div>
+
+      <!-- Carte -->
+      <div
+        id="zones-card"
+        class="absolute left-1/2 -translate-x-1/2 top-14 md:top-16
+               w-[1140px] max-w-[92vw]
+               h-auto md:h-[650px]
+               bg-[#F3F4F8] rounded-xl md:rounded-2xl shadow-sm
+               p-6 sm:p-8 md:p-12
+               flex flex-col md:flex-row items-center
+               gap-6 md:gap-10 lg:gap-16
+               z-[1]">
+
+        <div class="w-full md:w-1/2 flex justify-center md:justify-start">
+          <img
+            src="/img/diagnostics/zones.svg"
+            alt="Zones d’intervention — Île-de-France et alentours"
+            class="w-[78%] sm:w-[70%] md:w-full max-w-[420px]"
+            loading="lazy" decoding="async"
+          />
+        </div>
+
+        <div class="w-full md:w-1/2 min-w-0 flex flex-col gap-5 md:gap-7">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#11114E] leading-tight">
+            Zones d’intervention
+          </h1>
+
+          <p class="text-base sm:text-lg text-[#11114E]/90">
+            Intervention rapide en <strong>Île-de-France</strong> et départements limitrophes
+            (<strong>89</strong>, <strong>45</strong>, <strong>28</strong>). Créneaux sous <strong>24–48h</strong>.
+          </p>
+
+          <div class="flex flex-wrap gap-2" aria-label="Départements principaux">
+            {["75","77","78","91","92","93","94","95","89","45","28"].map((d) => (
+              <span class="inline-flex items-center rounded-full border border-[#11114E]/20 bg-white px-3 py-1 text-sm">Dept {d}</span>
+            ))}
+          </div>
+
+          <div class="mt-1 md:mt-3">
+            <a href="/contact"
+               class="inline-block bg-[#FF7B00] text-white text-lg font-semibold px-8 py-3 rounded-md hover:opacity-90 transition self-start">
+              Demander un devis
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spacer -->
+  <div id="zones-spacer" aria-hidden="true" class="diag-spacer"></div>
+
+  <!-- Sticky breadcrumb -->
+  <div id="crumb-sticky" class="sticky-crumb" aria-hidden="true">
+    <div class="row">
+      <div class="title">Zones d’intervention</div>
+      <button id="shareBtn" type="button" class="btn" aria-label="Partager">
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16.04 3.2c-6.97 0-12.64 5.66-12.64 12.64 0 2.22.59 4.31 1.62 6.11L3.2 28.8l7.02-1.77c1.72.94 3.69 1.47 5.82 1.47 6.97 0 12.64-5.66 12.64-12.64S23.01 3.2 16.04 3.2Z" stroke="#11114E" stroke-width="1.5"/>
+          <path d="M11.7 10.5c-.2-.44-.41-.45-.6-.45h-.52c-.18 0-.47.07-.72.35-.25.28-.95.92-.95 2.25s.98 2.61 1.12 2.79c.14.18 1.89 3.02 4.61 4.11 2.28.9 2.74.72 3.24.67.5-.05 1.59-.65 1.81-1.27.22-.62.22-1.15.16-1.27-.07-.12-.25-.2-.52-.35-.27-.15-1.59-.79-1.84-.88-.25-.09-.43-.14-.61.14-.18.29-.7.88-.86 1.06-.16.18-.32.2-.59.05-.27-.15-1.15-.42-2.2-1.33-.81-.72-1.35-1.6-1.51-1.87-.16-.27-.02-.42.12-.56.13-.13.29-.34.43-.51.14-.18.18-.29.27-.49.09-.2.05-.37-.02-.52-.07-.15-.56-1.34-.77-1.83Z" fill="#25D366"/>
+        </svg>
+        <span>Partager</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENU -->
+  <section class="bg-white">
+    <div class="px-6 py-14 max-w-6xl mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Départements & villes couvertes</h2>
+      <!-- NOTE GLOBALE : couverture complète -->
+      <p class="mt-3 text-gray-700 max-w-3xl">
+        La liste ci-dessous est <strong>indicative</strong> : nous couvrons <strong>toutes les communes</strong> de chaque département mentionné.
+      </p>
+
+      <div class="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[
+          { code:"75", nom:"Paris", villes:[
+            "Paris 1er","Paris 4e","Paris 7e","Paris 8e","Paris 11e",
+            "Paris 12e","Paris 13e","Paris 17e"
+          ] },
+          { code:"94", nom:"Val-de-Marne", villes:["Saint-Mandé","Vincennes","Créteil","Maisons-Alfort","Nogent-sur-Marne","Charenton-le-Pont"] },
+          { code:"93", nom:"Seine-Saint-Denis", villes:["Montreuil","Saint-Denis","Aubervilliers","Pantin","Bobigny"] },
+          { code:"92", nom:"Hauts-de-Seine", villes:["Boulogne-Billancourt","Nanterre","Neuilly-sur-Seine","Courbevoie","Levallois-Perret"] },
+          { code:"91", nom:"Essonne", villes:["Évry-Courcouronnes","Massy","Palaiseau","Savigny-sur-Orge"] },
+          { code:"78", nom:"Yvelines", villes:["Versailles","Saint-Germain-en-Laye","Poissy","Mantes-la-Jolie"] },
+          { code:"77", nom:"Seine-et-Marne", villes:["Melun","Meaux","Chelles","Fontainebleau"] },
+          { code:"95", nom:"Val-d’Oise", villes:["Argenteuil","Cergy","Sarcelles","Garges-lès-Gonesse"] },
+          { code:"89", nom:"Yonne", villes:["Sens","Auxerre","Joigny","Migennes"] },
+          { code:"45", nom:"Loiret", villes:["Orléans","Fleury-les-Aubrais","Olivet","Montargis"] },
+          { code:"28", nom:"Eure-et-Loir", villes:["Chartres","Dreux","Lucé","Châteaudun"] },
+        ].map(d => (
+          <div class="bg-[#11114E] text-white rounded-xl p-6 sm:p-7 md:p-8 shadow-lg">
+            <h3 class="text-lg md:text-xl font-semibold leading-snug">{d.code} — {d.nom}</h3>
+            <ul class="mt-3 space-y-1 text-sm leading-relaxed opacity-95">
+              {d.villes.map(v => <li class="list-disc list-inside">{v}</li>)}
+              <li class="mt-2 text-xs italic opacity-80">… ainsi que <strong>toutes les communes du département</strong>.</li>
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- DÉLAIS & DISPONIBILITÉS -->
+  <section class="bg-[#F3F4F8]">
+    <div class="px-6 py-16 max-w-6xl mx-auto text-center">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Délais & disponibilités</h2>
+      <p class="mt-3 text-[#11114E]/90 text-lg max-w-3xl mx-auto">
+        Créneaux sous <strong>24–48h</strong> selon zones et saisons. Contactez-nous pour confirmer la disponibilité sur votre commune.
+      </p>
+      <a href="/contact" class="mt-6 inline-block bg-[#FF7B00] text-white font-semibold px-8 py-3 rounded-md hover:opacity-90 transition">
+        Obtenir un devis
+      </a>
+    </div>
+  </section>
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context":"https://schema.org",
+      "@type":"Service",
+      "name":"Diagnostics immobiliers — Zones d’intervention",
+      "provider":{"@type":"Organization","name":"Expertise Diag"},
+      "areaServed":["Île-de-France","Yonne (89)","Loiret (45)","Eure-et-Loir (28)"]
+    })}
+  </script>
+
+  <!-- JS : spacer + sticky + partage + masquage pendant burger -->
+  <script is:inline>
+    (function(){
+      const header  = document.getElementById('siteHeader');
+      const hero    = document.getElementById('zones-hero');
+      const card    = document.getElementById('zones-card');
+      const spacer  = document.getElementById('zones-spacer');
+      const sticky  = document.getElementById('crumb-sticky');
+      const shareBtn= document.getElementById('shareBtn');
+      const overlay = document.getElementById('drawerOverlay');
+      const menuBtn = document.getElementById('menuBtn');
+
+      function syncTop(){
+        const h = header?.offsetHeight || 72;
+        sticky?.style.setProperty('--hdr-top', h + 'px');
+      }
+      function syncSpacer(){
+        if(!hero || !card || !spacer) return;
+        const heroH = hero.offsetHeight;
+        const cardTop = parseFloat(getComputedStyle(card).top) || 0;
+        const cardH = card.offsetHeight;
+        const desiredGap = window.innerWidth < 640 ? 18 : 20;
+        const needed = Math.max(desiredGap, (cardTop + cardH) - heroH + desiredGap);
+        spacer.style.height = needed + 'px';
+      }
+      function onScroll(){
+        if (!sticky) return;
+        if (sticky.classList.contains('hidden')) return;
+        if (window.scrollY > 10) sticky.classList.add('show');
+        else sticky.classList.remove('show');
+      }
+      function share(){
+        const title = 'Zones d’intervention';
+        const url = location.href;
+        const text = `${title} — ${url}`;
+        if (navigator.share){ navigator.share({ title, url, text }).catch(()=>{}); }
+        else { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener,noreferrer'); }
+      }
+      function isMenuOpen(){
+        const expanded = menuBtn?.getAttribute('aria-expanded') === 'true';
+        const overlayVisible = overlay && overlay.style.display !== 'none';
+        return !!(expanded || overlayVisible);
+      }
+      function applyMenuState(){
+        const open = isMenuOpen();
+        if (open){ sticky?.classList.add('hidden'); sticky?.classList.remove('show'); }
+        else { sticky?.classList.remove('hidden'); onScroll(); }
+      }
+      function init(){ syncTop(); syncSpacer(); onScroll(); applyMenuState(); }
+      init();
+
+      window.addEventListener('resize', ()=>{ syncTop(); syncSpacer(); }, { passive:true });
+      window.addEventListener('scroll', onScroll, { passive:true });
+      shareBtn?.addEventListener('click', share);
+
+      document.fonts?.ready?.then(syncSpacer).catch(()=>{});
+      if ('ResizeObserver' in window && card){
+        const ro = new ResizeObserver(syncSpacer);
+        ro.observe(card);
+      }
+      if (overlay && 'MutationObserver' in window){
+        new MutationObserver(applyMenuState)
+          .observe(overlay, { attributes:true, attributeFilter:['style','class'] });
+      }
+      if (menuBtn){
+        if ('MutationObserver' in window){
+          new MutationObserver(applyMenuState)
+            .observe(menuBtn, { attributes:true, attributeFilter:['aria-expanded','class'] });
+        }
+        menuBtn.addEventListener('click', () => setTimeout(applyMenuState, 0));
+      }
+    })();
+  </script>
+</Layout>

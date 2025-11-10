@@ -1,0 +1,321 @@
+---
+/* src/pages/a-propos.astro */
+import Layout from "../layouts/Base.astro";
+
+const pageTitle = "À propos — Expertise Diag";
+const description =
+  "Qui sommes-nous ? Diagnostiqueur immobilier certifié : DPE, amiante, gaz, électricité, plomb, Carrez, Boutin, termites. Intervention rapide en Île-de-France et alentours (89, 45, 28).";
+---
+
+<Layout title={pageTitle} description={description}>
+  <style is:global>
+    #siteHeader { border-bottom: 0 !important; }
+
+    /* Sticky compact + apparition douce (même logique que les autres pages) */
+    .sticky-crumb{
+      position:fixed; left:0; right:0; top:var(--hdr-top,72px);
+      z-index:45; background:#F3F4F8; border-bottom:1px solid rgba(0,0,0,.08);
+      box-shadow:0 4px 10px rgba(0,0,0,.06);
+      opacity:0; transform:translateY(-8px);
+      transition:opacity .18s ease-out, transform .18s ease-out;
+      pointer-events:none;
+    }
+    .sticky-crumb.show{ opacity:1; transform:translateY(0); pointer-events:auto; }
+    .sticky-crumb.hidden{ opacity:0; transform:translateY(-8px); pointer-events:none; }
+    .sticky-crumb .row{ max-width:72rem; margin:0 auto; padding:.6rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:.75rem; }
+    .sticky-crumb .title{ font-weight:600; color:#11114E; font-size:.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sticky-crumb .btn{ display:inline-flex; align-items:center; gap:.5rem; border:1px solid rgba(0,0,0,.12); border-radius:.5rem; padding:.45rem .65rem; background:#fff; color:#11114E; font-size:.9rem; }
+    .sticky-crumb .btn svg{ width:18px; height:18px; }
+    .sticky-crumb .btn span{ display:none; }
+    @media (min-width:640px){ .sticky-crumb .btn span{ display:inline; } }
+  </style>
+
+  <!-- HERO bleu + fil d’Ariane -->
+  <section class="relative bg-[#11114E] overflow-visible">
+    <div class="max-w-6xl mx-auto px-6 relative">
+      <nav aria-label="Fil d’Ariane"
+           class="relative z-[2] text-sm text-white/90 pt-4 pb-2">
+        <a href="/" class="underline underline-offset-4 hover:no-underline">Accueil</a>
+        <span class="mx-2" aria-hidden="true">›</span>
+        <span class="opacity-90">À propos</span>
+      </nav>
+
+      <!-- Hauteur identique aux autres pages -->
+      <div id="apropos-hero" aria-hidden="true" class="h-[440px] md:h-[500px]"></div>
+
+      <!-- Carte chevauchante -->
+      <div
+        id="apropos-card"
+        class="absolute left-1/2 -translate-x-1/2 top-14 md:top-16
+               w-[1140px] max-w-[92vw]
+               h-auto md:h-[560px]
+               bg-[#F3F4F8] rounded-xl md:rounded-2xl shadow-sm
+               p-6 sm:p-8 md:p-12
+               flex flex-col md:flex-row items-center
+               gap-6 md:gap-10 lg:gap-16
+               z-[1]">
+
+        <!-- Visuel -->
+        <div class="w-full md:w-1/2 flex justify-center md:justify-start">
+          <img
+            src="/logo1.svg"
+            alt="Expertise Diag — Professionnel en intervention"
+            class="w-[78%] sm:w-[70%] md:w-full max-w-[420px]"
+            loading="lazy" decoding="async"
+          />
+        </div>
+
+        <!-- Texte -->
+        <div class="w-full md:w-1/2 min-w-0 flex flex-col gap-5 md:gap-7">
+          <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#11114E] leading-tight">
+            Expertise Diag, la proximité et la rigueur
+          </h1>
+
+          <p class="text-base sm:text-lg text-[#11114E]/90">
+            Nous réalisons vos diagnostics immobiliers avec une exigence constante de <strong>clarté</strong>,
+            de <strong>conformité</strong> et de <strong>réactivité</strong>. Vente, location ou travaux :
+            nous vous accompagnons de A à Z.
+          </p>
+
+          <ul class="grid grid-cols-2 gap-2 text-sm text-[#11114E]">
+            <li class="rounded-md bg-white border border-[#11114E]/15 px-3 py-2">Certifié & assuré</li>
+            <li class="rounded-md bg-white border border-[#11114E]/15 px-3 py-2">Rapports clairs & lisibles</li>
+            <li class="rounded-md bg-white border border-[#11114E]/15 px-3 py-2">Délais 24–48h</li>
+            <li class="rounded-md bg-white border border-[#11114E]/15 px-3 py-2">Conseils pratiques</li>
+          </ul>
+
+          <div class="mt-1 md:mt-3">
+            <a href="/contact"
+               class="inline-block bg-[#FF7B00] text-white text-lg font-semibold px-8 py-3 rounded-md hover:opacity-90 transition self-start">
+              Demander un devis
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spacer sous la carte (cohérent) -->
+  <div id="apropos-spacer" aria-hidden="true" class="diag-spacer"></div>
+
+  <!-- Sticky breadcrumb -->
+  <div id="crumb-sticky" class="sticky-crumb" aria-hidden="true">
+    <div class="row">
+      <div class="title">À propos</div>
+      <button id="shareBtn" type="button" class="btn" aria-label="Partager">
+        <!-- Icône WhatsApp -->
+        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16.04 3.2c-6.97 0-12.64 5.66-12.64 12.64 0 2.22.59 4.31 1.62 6.11L3.2 28.8l7.02-1.77c1.72.94 3.69 1.47 5.82 1.47 6.97 0 12.64-5.66 12.64-12.64S23.01 3.2 16.04 3.2Z" stroke="#11114E" stroke-width="1.5"/>
+          <path d="M11.7 10.5c-.2-.44-.41-.45-.6-.45h-.52c-.18 0-.47.07-.72.35-.25.28-.95.92-.95 2.25s.98 2.61 1.12 2.79c.14.18 1.89 3.02 4.61 4.11 2.28.9 2.74.72 3.24.67.5-.05 1.59-.65 1.81-1.27.22-.62.22-1.15.16-1.27-.07-.12-.25-.2-.52-.35-.27-.15-1.59-.79-1.84-.88-.25-.09-.43-.14-.61.14-.18.29-.7.88-.86 1.06-.16.18-.32.2-.59.05-.27-.15-1.15-.42-2.2-1.33-.81-.72-1.35-1.6-1.51-1.87-.16-.27-.02-.42.12-.56.13-.13.29-.34.43-.51.14-.18.18-.29.27-.49.09-.2.05-.37-.02-.52-.07-.15-.56-1.34-.77-1.83Z" fill="#25D366"/>
+        </svg>
+        <span>Partager</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTENU -->
+  <section class="bg-white">
+    <div class="px-6 py-14 max-w-6xl mx-auto">
+      <!-- Mission & valeurs -->
+      <div class="grid md:grid-cols-2 gap-8">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Notre mission</h2>
+          <p class="mt-3 text-gray-700 leading-relaxed">
+            Apporter aux propriétaires, bailleurs et agences des <strong>diagnostics fiables</strong>,
+            rédigés de manière <strong>pédagogique</strong>, afin de sécuriser chaque transaction
+            et d’éclairer les décisions (travaux, mise en conformité, rénovation énergétique).
+          </p>
+        </div>
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Nos valeurs</h2>
+          <ul class="mt-3 space-y-2 text-gray-700 leading-relaxed">
+            <li><strong>Transparence :</strong> constats motivés, photos & relevés clairs.</li>
+            <li><strong>Réactivité :</strong> créneaux 24–48h, envoi rapide des rapports.</li>
+            <li><strong>Exigence :</strong> conformité réglementaire, veille technique continue.</li>
+            <li><strong>Conseil :</strong> recommandations pratiques et priorisées.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Qui suis-je / Certifications -->
+      <div class="mt-12 grid md:grid-cols-3 gap-8">
+        <div class="md:col-span-1">
+          <div class="bg-[#F3F4F8] rounded-xl p-6 border border-[#11114E]/10">
+            <img src="/public/logo1.svg" alt="" class="w-28 h-28 rounded-full mx-auto" loading="lazy" />
+            <h3 class="text-lg font-semibold text-[#11114E] mt-4 text-center">Votre diagnostiqueur</h3>
+            <p class="text-gray-700 text-sm mt-2 text-center">
+              Diagnostiqueur certifié, assuré RC-Pro, basé à Saint-Mandé. Déplacements en Île-de-France et départements 89/45/28.
+            </p>
+          </div>
+        </div>
+        <div class="md:col-span-2 md:self-center">
+          <h3 class="text-xl md:text-2xl font-semibold text-[#11114E]">Certifications & assurances</h3>
+          <ul class="mt-3 grid sm:grid-cols-2 gap-3 text-sm text-gray-700">
+            <li class="rounded-md bg-[#F6F7FB] border border-[#11114E]/10 px-3 py-2">DPE (habitations)</li>
+            <li class="rounded-md bg-[#F6F7FB] border border-[#11114E]/10 px-3 py-2">Amiante (vente / avant travaux)</li>
+            <li class="rounded-md bg-[#F6F7FB] border border-[#11114E]/10 px-3 py-2">Électricité & Gaz (+15 ans)</li>
+            <li class="rounded-md bg-[#F6F7FB] border border-[#11114E]/10 px-3 py-2">Plomb (CREP)</li>
+            <li class="rounded-md bg-[#F6F7FB] border border-[#11114E]/10 px-3 py-2">Loi Carrez / Loi Boutin</li>
+            <li class="rounded-md bg-[#F6F7FB] border border-[#11114E]/10 px-3 py-2">Termites (zones concernées)</li>
+          </ul>
+          <p class="mt-3 text-gray-700 text-sm">
+            <strong>Attestations sur demande. Numéros de certification et police d’assurance indiqués sur chaque rapport.</strong>
+          </p>
+        </div>
+      </div>
+
+      <!-- Méthodologie -->
+      <div class="mt-12">
+        <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Notre méthodologie</h2>
+        <ol class="mt-4 space-y-3 text-gray-700">
+          <li><strong>1. Prise de contact :</strong> recueil du besoin, périmètre des diagnostics, devis gratuit.</li>
+          <li><strong>2. Intervention sur site :</strong> repérages, mesures, relevés et photos, en toute sécurité.</li>
+          <li><strong>3. Analyse & rapport :</strong> application de la réglementation en vigueur, rédaction claire.</li>
+          <li><strong>4. Restitution & conseil :</strong> remise des rapports, réponses aux questions, recommandations.</li>
+        </ol>
+      </div>
+
+      <!-- Zones + CTA -->
+      <div class="mt-12 grid md:grid-cols-2 gap-8">
+        <div class="bg-[#11114E] text-white rounded-xl p-6 md:p-7 shadow-lg">
+          <h3 class="text-lg md:text-xl font-semibold">Zones d’intervention</h3>
+          <p class="mt-2 text-white/90">
+            Île-de-France (75, 77, 78, 91, 92, 93, 94, 95) et départements limitrophes (89, 45, 28).
+          </p>
+          <a href="/zones" class="mt-4 inline-block bg-white text-[#11114E] font-semibold px-4 py-2 rounded-md hover:opacity-90 transition">
+            Voir les zones couvertes
+          </a>
+        </div>
+
+        <div class="bg-[#F3F4F8] rounded-xl p-6 md:p-7 border border-[#11114E]/10">
+          <h3 class="text-lg md:text-xl font-semibold text-[#11114E]">Délais & disponibilités</h3>
+          <p class="mt-2 text-gray-700">
+            Créneaux sous <strong>24–48h</strong>, selon saison et localisation. Devis rapide et sans engagement.
+          </p>
+          <a href="/contact" class="mt-4 inline-block bg-[#FF7B00] text-white font-semibold px-4 py-2 rounded-md hover:opacity-90 transition">
+            Demander un devis
+          </a>
+        </div>
+      </div>
+
+      <!-- FAQ courte -->
+      <div class="mt-12">
+        <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Questions fréquentes</h2>
+        <div class="mt-4 space-y-4">
+          <details class="rounded-lg border border-[#11114E]/15 p-4 bg-white">
+            <summary class="font-semibold text-[#11114E] cursor-pointer">Sous combien de temps puis-je obtenir un RDV&nbsp;?</summary>
+            <p class="mt-2 text-gray-700">En général sous 24–48h. Nous faisons au mieux selon votre urgence et la zone.</p>
+          </details>
+          <details class="rounded-lg border border-[#11114E]/15 p-4 bg-white">
+            <summary class="font-semibold text-[#11114E] cursor-pointer">Recevrai-je des conseils suite au diagnostic&nbsp;?</summary>
+            <p class="mt-2 text-gray-700">Oui, chaque rapport s’accompagne d’explications et de recommandations pratiques.</p>
+          </details>
+          <details class="rounded-lg border border-[#11114E]/15 p-4 bg-white">
+            <summary class="font-semibold text-[#11114E] cursor-pointer">Intervenez-vous le samedi&nbsp;?</summary>
+            <p class="mt-2 text-gray-700">Oui, nous sommes disponile le weekend. Indiquez vos contraintes lors de la demande de devis.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bandeau final -->
+  <section class="bg-[#F3F4F8] text-center">
+    <div class="px-6 py-16 max-w-6xl mx-auto">
+      <h2 class="text-2xl md:text-3xl font-bold text-[#11114E]">Besoin d’un diagnostic&nbsp;?</h2>
+      <p class="mt-2 text-gray-700">Devis gratuit et réactif. Réponse assurée.</p>
+      <a href="/contact" class="mt-6 inline-block bg-[#FF7B00] text-white font-semibold px-8 py-3 rounded-md hover:opacity-90 transition">
+        Demander un devis
+      </a>
+    </div>
+  </section>
+
+  <!-- JSON-LD (Organization/ProfessionalService) -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context":"https://schema.org",
+      "@type":"ProfessionalService",
+      "name":"Expertise Diag",
+      "url":"https://www.expertisediag.fr",
+      "logo":"https://www.expertisediag.fr/logo1.svg",
+      "image":"https://www.expertisediag.fr/img/ui/atelier.svg",
+      "description": description,
+      "areaServed":["Île-de-France","Yonne (89)","Loiret (45)","Eure-et-Loir (28)"],
+      "sameAs":[]
+    })}
+  </script>
+
+  <!-- JS : spacer + sticky + partage + masquage pendant burger -->
+  <script is:inline>
+    (function(){
+      const header  = document.getElementById('siteHeader');
+      const hero    = document.getElementById('apropos-hero');
+      const card    = document.getElementById('apropos-card');
+      const spacer  = document.getElementById('apropos-spacer');
+      const sticky  = document.getElementById('crumb-sticky');
+      const shareBtn= document.getElementById('shareBtn');
+      const overlay = document.getElementById('drawerOverlay');
+      const menuBtn = document.getElementById('menuBtn');
+
+      function syncTop(){
+        const h = header?.offsetHeight || 72;
+        sticky?.style.setProperty('--hdr-top', h + 'px');
+      }
+      function syncSpacer(){
+        if(!hero || !card || !spacer) return;
+        const heroH = hero.offsetHeight;
+        const cardTop = parseFloat(getComputedStyle(card).top) || 0;
+        const cardH = card.offsetHeight;
+        const desiredGap = window.innerWidth < 640 ? 18 : 20;
+        const needed = Math.max(desiredGap, (cardTop + cardH) - heroH + desiredGap);
+        spacer.style.height = needed + 'px';
+      }
+      function onScroll(){
+        if (!sticky) return;
+        if (sticky.classList.contains('hidden')) return;
+        if (window.scrollY > 10) sticky.classList.add('show');
+        else sticky.classList.remove('show');
+      }
+      function share(){
+        const title = 'À propos';
+        const url = location.href;
+        const text = `${title} — ${url}`;
+        if (navigator.share){ navigator.share({ title, url, text }).catch(()=>{}); }
+        else { window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener,noreferrer'); }
+      }
+      function isMenuOpen(){
+        const expanded = menuBtn?.getAttribute('aria-expanded') === 'true';
+        const overlayVisible = overlay && overlay.style.display !== 'none';
+        return !!(expanded || overlayVisible);
+      }
+      function applyMenuState(){
+        const open = isMenuOpen();
+        if (open){ sticky?.classList.add('hidden'); sticky?.classList.remove('show'); }
+        else { sticky?.classList.remove('hidden'); onScroll(); }
+      }
+      function init(){ syncTop(); syncSpacer(); onScroll(); applyMenuState(); }
+      init();
+
+      window.addEventListener('resize', ()=>{ syncTop(); syncSpacer(); }, { passive:true });
+      window.addEventListener('scroll', onScroll, { passive:true });
+      shareBtn?.addEventListener('click', share);
+
+      document.fonts?.ready?.then(syncSpacer).catch(()=>{});
+      if ('ResizeObserver' in window && card){
+        const ro = new ResizeObserver(syncSpacer);
+        ro.observe(card);
+      }
+      if (overlay && 'MutationObserver' in window){
+        new MutationObserver(applyMenuState)
+          .observe(overlay, { attributes:true, attributeFilter:['style','class'] });
+      }
+      if (menuBtn){
+        if ('MutationObserver' in window){
+          new MutationObserver(applyMenuState)
+            .observe(menuBtn, { attributes:['aria-expanded','class'] });
+        }
+        menuBtn.addEventListener('click', () => setTimeout(applyMenuState, 0));
+      }
+    })();
+  </script>
+</Layout>

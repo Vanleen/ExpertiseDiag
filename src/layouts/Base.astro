@@ -39,7 +39,7 @@ const {
   "logo": "https://www.expertisediag.fr/logoED.png",
   "image": "https://www.expertisediag.fr/logoED.png",
   "description": "Diagnostics immobiliers certifiés — rapides et conformes en Île-de-France et alentours (89, 45, 28). DPE, Amiante, Gaz, Électricité, Plomb, Loi Carrez, Termites.",
-  "telephone": "+33745687654",
+  "telephone": "+33745687664",
   "email": "contact@expertisediag.fr",
   "taxID": "99205834700012",
   "address": {
@@ -91,17 +91,17 @@ const {
         <nav class="hidden show-desktop items-center gap-6 whitespace-nowrap" aria-label="Navigation principale">
           <a class="hover:underline" href="/diagnostics">Diagnostics</a>
           <a class="hover:underline" href="/zones">Zones</a>
-          <a class="hover:underline" href="/blog">Blog</a>
+          <a class="hover:underline" href="/articles">Articles</a>
           <a class="hover:underline" href="/a-propos">À propos</a>
 
           <!-- Bouton téléphone (desktop) -->
-          <a href="tel:+33745687654"
+          <a href="tel:+33745687664"
              class="inline-flex items-center justify-center rounded-md border border-[#11114E]/30 text-[#11114E] px-3 py-2.5 leading-none">
             <svg class="block h-[20px] w-[20px] relative top-[3px] overflow-visible" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.17 9.81 19.78 19.78 0 0 1 .1 1.18 2 2 0 0 1 2.11-.99h2a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L5.4 6.91a16 16 0 0 0 7.69 7.69l1.45-1.88a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92Z"
                     stroke="#11114E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <span class="ml-2 whitespace-nowrap">07 45 68 76 54</span>
+            <span class="ml-2 whitespace-nowrap">07 45 68 76 64</span>
           </a>
 
           <!-- Bouton devis (desktop) -->
@@ -112,7 +112,7 @@ const {
 
         <!-- ACTIONS TABLETTE : visibles 768–1199px -->
         <div class="hidden show-tablet items-center gap-3">
-          <a href="tel:+33745687654"
+          <a href="tel:+33745687664"
              class="inline-flex items-center justify-center rounded-md border border-[#11114E]/30 text-[#11114E] px-3 py-2.5 leading-none">
             <svg class="block h-[20px] w-[20px] relative top-[3px] overflow-visible" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.17 9.81 19.78 19.78 0 0 1 .1 1.18 2 2 0 0 1 2.11-.99h2a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L5.4 6.91a16 16 0 0 0 7.69 7.69l1.45-1.88a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92Z"
@@ -135,6 +135,14 @@ const {
       </div>
     </div>
   </header>
+
+  <script is:inline>
+  // Évite que le skip-link obtienne le focus au chargement
+  window.addEventListener('DOMContentLoaded', () => {
+    const s = document.querySelector('.skip-link');
+    if (document.activeElement === s) s.blur();
+  });
+</script>
 
   <!-- OVERLAY + DRAWER MOBILE (plein écran en largeur) -->
   <div id="drawerOverlay" class="fixed inset-0 z-[60]" style="display:none;">
@@ -161,13 +169,13 @@ const {
         <a class="block py-3 border-b border-white/15" href="/a-propos">À propos de nous</a>
         <a class="block py-3 border-b border-white/15" href="/diagnostics">Diagnostics immobiliers</a>
         <a class="block py-3 border-b border-white/15" href="/zones">Zones</a>
-        <a class="block py-3 border-b border-white/15" href="/blog">Blog</a>
+        <a class="block py-3 border-b border-white/15" href="/articles">Articles</a>
         <a class="block py-3" href="/contact">Contact</a>
 
         <div class="pt-4 text-white/80 text-sm">Espace client (bientôt)</div>
 
         <div class="mt-4 space-y-3">
-          <a href="tel:+33745687654" class="block text-center border rounded-md py-3 border-white/60 text-white">07 45 68 76 54</a>
+          <a href="tel:+33745687664" class="block text-center border rounded-md py-3 border-white/60 text-white">07 45 68 76 64</a>
           <a href="/contact" class="block text-center rounded-md py-3 bg-white text-[#11114E] font-medium">Demander un devis</a>
         </div>
       </nav>
@@ -183,7 +191,7 @@ const {
   <div class="md:hidden fixed inset-x-0 bottom-0 z-50 bg-[#11114E]">
     <div class="actionbar-safe px-3 pt-3 grid grid-cols-2 gap-3">
       <!-- TÉLÉPHONE : shield+cookie AVANT l’icône téléphone (cliquable pour ouvrir le modal) -->
-      <a href="tel:+33745687654"
+      <a href="tel:+33745687664"
          class="rounded-md bg-white text-[#11114E] py-3 text-center font-medium shadow-sm
                 inline-flex items-center justify-center gap-2">
         <!-- Stack shield + cookie — ACTIVÉ pour ouvrir le modal -->
@@ -200,7 +208,7 @@ const {
           <path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.78 19.78 0 0 1-8.63-3.07A19.5 19.5 0 0 1 3.17 9.81 19.78 19.78 0 0 1 .1 1.18 2 2 0 0 1 2.11-.99h2a2 2 0 0 1 2 1.72c.12.9.33 1.77.62 2.61a2 2 0 0 1-.45 2.11L5.4 6.91a16 16 0 0 0 7.69 7.69l1.45-1.88a2 2 0 0 1 2.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0 1 22 16.92Z"
                 stroke="#11114E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span class="whitespace-nowrap">07 45 68 76 54</span>
+        <span class="whitespace-nowrap">07 45 68 76 64</span>
       </a>
 
       <a href="/contact"
@@ -232,7 +240,7 @@ const {
             Interventions : Île-de-France et alentours (89, 45, 28)
           </p>
           <p class="text-white/80">
-            Tél. <a class="footer-link" href="tel:+33745687654">07&nbsp;45&nbsp;68&nbsp;76&nbsp;54</a>
+            Tél. <a class="footer-link" href="tel:+33745687664">07&nbsp;45&nbsp;68&nbsp;76&nbsp;64</a>
           </p>
           <p class="text-white/80">
             SIRET : 992&nbsp;058&nbsp;347&nbsp;00012

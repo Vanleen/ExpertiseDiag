@@ -1,14 +1,9 @@
 ---
-// src/pages/contact.astro
+/* src/pages/contact.astro */
 import Layout from "../layouts/Base.astro";
-
 const pageTitle = "Demander un devis | Expertise Diag";
-const description = "Formulaire de demande de devis — envoi par e-mail (API) et partage WhatsApp.";
-
-// ⚠️ REMPLACE par TA **Site Key** hCaptcha (publique)
-const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
+const description = "Formulaire de demande de devis — envoi par e-mail (API) et WhatsApp, hCaptcha.";
 ---
-
 <Layout title={pageTitle} description={description}>
   <style is:global>
     .devis-wrap{ min-height:calc(100vh - 0px); display:grid; place-items:center; padding:2rem 1rem; background:#f7f8fc; }
@@ -24,8 +19,25 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
     .btn-outline{ background:#fff; color:#11114E; border:1px solid rgba(0,0,0,.12); }
     .visually-hidden{ position:absolute !important; height:1px;width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
     .actions{ display:flex; flex-wrap:wrap; gap:.5rem; justify-content:space-between; align-items:center; }
-    .toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:20px; background:#11111b; color:#fff; padding:.75rem 1rem; border-radius:.6rem; box-shadow:0 10px 30px rgba(0,0,0,.25); z-index:60; }
-    .toast.ok{ background:#0f766e; } .toast.err{ background:#991b1b; }
+
+    /* --- TOAST CENTRÉ (succès/erreur) --- */
+    .toast-center{ position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; pointer-events: none; }
+    .toast-card{
+      min-width: min(92vw, 560px);
+      border-radius: 12px; background: #fff;
+      box-shadow: 0 20px 50px rgba(0,0,0,.18);
+      border: 1px solid rgba(0,0,0,.08); padding: 16px 18px;
+      transform: translateY(-8px); opacity: 0;
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events: auto;
+    }
+    .toast-card.show{ opacity: 1; transform: translateY(0); }
+    .toast-title{ font-weight: 700; margin: 0 0 2px; }
+    .toast-msg{ margin: 0; color: #334155; }
+    .toast-success .toast-title{ color: #16a34a; }
+    .toast-error   .toast-title{ color: #b91c1c; }
+    .toast-actions{ margin-top: 8px; display:flex; justify-content:flex-end; gap:8px; }
+    .toast-close{ border:1px solid rgba(0,0,0,.12); background:#fff; border-radius:8px; padding:6px 10px; }
   </style>
 
   <section class="devis-wrap">
@@ -37,11 +49,10 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
 
       <div class="devis-body">
         <div class="mb-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-blue-900">
-          L’envoi utilise notre API sécurisée (aucune donnée n’est stockée durablement). Le captcha protège contre le spam.
+          Remplissez le formulaire puis validez. Le message est protégé par hCaptcha.
         </div>
 
         <form id="devis-form" class="devis-grid" novalidate>
-          <!-- Honeypot -->
           <div class="visually-hidden" aria-hidden="true">
             <label>Ne pas remplir ce champ
               <input type="text" name="company" tabindex="-1" autocomplete="off" />
@@ -59,8 +70,8 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
             <div>
               <label for="phone" class="block text-sm font-medium text-[#11114E]">Téléphone<span aria-hidden="true" class="text-red-600">*</span></label>
               <input id="phone" name="phone" type="tel" required inputmode="tel"
-                     pattern="[0-9()+.\- ]{6,}" autocomplete="tel"
-                     class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. 07 45 68 76 54" />
+                     pattern="^[0-9+().\s-]{6,}$" autocomplete="tel"
+                     class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. 07 45 68 76 64" />
               <p class="help">Nous vous rappelons rapidement.</p>
               <p data-err-for="phone" class="err hidden">Téléphone invalide.</p>
             </div>
@@ -68,7 +79,7 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
 
           <div class="devis-grid devis-grid-2">
             <div>
-              <label for="email" class="block text-sm font-medium text-[#11114E]">Email (optionnel)</label>
+              <label for="email" class="block text-sm font-medium text-[#11114E]">Email</label>
               <input id="email" name="email" type="email" autocomplete="email"
                      class="mt-1 w-full rounded-md border px-3 py-2" placeholder="Ex. nom@domaine.fr" />
               <p data-err-for="email" class="err hidden">Email invalide.</p>
@@ -106,9 +117,7 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
           <fieldset class="mt-1">
             <legend class="block text-sm font-medium text-[#11114E]">Diagnostics souhaités</legend>
             <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {[
-                "DPE","Amiante","Électricité","Gaz","CREP (Plomb)","Loi Carrez","Loi Boutin","Termites"
-              ].map((label) => (
+              {["DPE","Amiante","Électricité","Gaz","CREP (Plomb)","Loi Carrez","Loi Boutin","Termites"].map((label) => (
                 <label class="inline-flex items-center gap-2 text-sm">
                   <input type="checkbox" name="diagnostics" value={label} />
                   <span>{label}</span>
@@ -125,22 +134,18 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
             <p data-err-for="message" class="err hidden">Message requis (au moins 10 caractères).</p>
           </div>
 
-          <!-- hCaptcha -->
-          <div class="mt-1">
-            <div id="captchaBox"
-                 class="h-captcha"
-                 data-sitekey={HCAPTCHA_SITEKEY}>
-            </div>
-            <p data-err-for="captcha" class="err hidden mt-1">Veuillez valider le captcha.</p>
-          </div>
-
           <div class="rounded-md border border-[#11114E]/15 p-3 bg-[#F6F7FB]">
             <label class="inline-flex items-start gap-2 text-sm">
               <input id="consent" name="consent" type="checkbox" required />
               <span>J’accepte que mes données soient utilisées pour traiter ma demande, conformément à la <a href="/confidentialite" class="underline">Politique de confidentialité</a>. *</span>
             </label>
-            <p class="help mt-1">Vous pouvez modifier vos préférences à tout moment depuis « Confidentialité & Cookies ».</p>
+            <p class="help mt-1">Vous pouvez modifier vos préférences à tout moment depuis «&nbsp;Confidentialité &amp; Cookies&nbsp;».</p>
             <p data-err-for="consent" class="err hidden">Consentement requis.</p>
+          </div>
+
+          <!-- hCaptcha widget -->
+          <div class="mt-2">
+            <div class="h-captcha" data-sitekey={import.meta.env.PUBLIC_HCAPTCHA_SITEKEY}></div>
           </div>
 
           <div class="actions pt-2">
@@ -154,7 +159,7 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
                 </svg>
                 <span class="hidden sm:inline">WhatsApp</span>
               </button>
-              <button id="submitBtn" type="submit" class="btn btn-primary">Envoyer par e-mail</button>
+              <button id="submitBtn" type="submit" class="btn btn-primary">Envoyer</button>
             </div>
           </div>
 
@@ -164,86 +169,71 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
     </div>
   </section>
 
-  <!-- hCaptcha script -->
-  <script src="https://hcaptcha.com/1/api.js" async defer></script>
+  <!-- Toast centré -->
+  <div id="toast" class="toast-center" aria-live="polite" aria-atomic="true" hidden>
+    <div id="toastCard" class="toast-card" role="alert">
+      <h3 id="toastTitle" class="toast-title">Titre</h3>
+      <p id="toastMsg" class="toast-msg">Message</p>
+      <div class="toast-actions">
+        <button type="button" class="toast-close" id="toastClose">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 
   <script is:inline>
     (function(){
-      // ⚠️ Toujours utiliser l’API Vercel (CORS déjà autorisé côté serveur)
-      const API_URL = "https://expertisediag-mail-api.vercel.app/api/send-devis";
+      var $f = document.getElementById('devis-form');
+      var $submit = document.getElementById('submitBtn');
+      var $btnWa = document.getElementById('btnWhatsApp');
+      var $consentBtn = document.getElementById('openConsent');
 
-      const $f = document.getElementById('devis-form');
-      const $submit = document.getElementById('submitBtn');
-      const $btnWa = document.getElementById('btnWhatsApp');
-      const $consentBtn = document.getElementById('openConsent');
+      var $toast = document.getElementById('toast');
+      var $toastCard = document.getElementById('toastCard');
+      var $toastTitle = document.getElementById('toastTitle');
+      var $toastMsg = document.getElementById('toastMsg');
+      var $toastClose = document.getElementById('toastClose');
+      var toastTimer;
 
-      function toast(msg, ok=false){
-        const t = document.createElement('div');
-        t.className = 'toast ' + (ok ? 'ok':'err');
-        t.textContent = msg;
-        document.body.appendChild(t);
-        setTimeout(()=>{ t.remove(); }, 2600);
-      }
+      var API_URL = "https://expertisediag-mail-api.vercel.app/api/send-devis";
+
       function showErr(name, msg){
-        const el = document.querySelector(`[data-err-for="${name}"]`);
+        var el = document.querySelector('[data-err-for="' + name + '"]');
         if(el){ el.textContent = msg; el.classList.remove('hidden'); }
       }
       function clearErrs(){
-        document.querySelectorAll('[data-err-for]').forEach(e=>e.classList.add('hidden'));
+        document.querySelectorAll('[data-err-for]').forEach(function(e){ e.classList.add('hidden'); });
       }
       function getVals(){
-        const data = new FormData($f);
+        var data = new FormData($f);
+        var diags = Array.from($f.querySelectorAll('input[name="diagnostics"]:checked')).map(function(i){ return i.value; });
         return {
-          hp: (data.get('company')||'').toString().trim(),
-          fullName: (data.get('fullName')||'').toString().trim(),
-          phone: (data.get('phone')||'').toString().trim(),
-          email: (data.get('email')||'').toString().trim(),
-          city: (data.get('city')||'').toString().trim(),
-          propertyType: (data.get('propertyType')||'').toString().trim(),
-          context: (data.get('context')||'').toString().trim(),
-          diagnostics: Array.from($f.querySelectorAll('input[name="diagnostics"]:checked')).map(i=>i.value),
-          message: (data.get('message')||'').toString().trim(),
-          consent: data.get('consent') === 'on',
+          hp: String(data.get('company')||'').trim(),
+          fullName: String(data.get('fullName')||'').trim(),
+          phone: String(data.get('phone')||'').trim(),
+          email: String(data.get('email')||'').trim(),
+          city: String(data.get('city')||'').trim(),
+          propertyType: String(data.get('propertyType')||'').trim(),
+          context: String(data.get('context')||'').trim(),
+          diagnostics: diags,
+          message: String(data.get('message')||'').trim(),
+          consent: data.get('consent') === 'on'
         };
       }
       function validate(v){
         clearErrs();
-        if (v.hp) return false; // bot
-        let ok = true;
+        if (v.hp) return false;
+        var ok = true;
         if (v.fullName.length < 2){ showErr('fullName','Nom requis.'); ok = false; }
-        if (!/[0-9()+.\- ]{6,}/.test(v.phone)){ showErr('phone','Téléphone invalide.'); ok = false; }
+        if (!/^[0-9+().\s-]{6,}$/.test(v.phone)){ showErr('phone','Téléphone invalide.'); ok = false; }
         if (v.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)){ showErr('email','Email invalide.'); ok = false; }
-        if (v.message.length < 10){ showErr('message','Message requis (au moins 10 caractères).'); ok = false; }
+        if (v.message.length < 10){ showErr('message','Message trop court.'); ok = false; }
         if (!v.consent){ showErr('consent','Consentement requis.'); ok = false; }
-        // Captcha présent ?
-        const token = window.hcaptcha?.getResponse?.() || '';
-        if (!token){ showErr('captcha','Veuillez valider le captcha.'); ok = false; }
         return ok;
       }
-      function buildText(v){
-        return [
-          "Demande de devis — Expertise Diag",
-          "",
-          `Nom: ${v.fullName}`,
-          `Téléphone: ${v.phone}`,
-          `Email: ${v.email || "—"}`,
-          `Ville: ${v.city || "—"}`,
-          `Type de bien: ${v.propertyType || "—"}`,
-          `Contexte: ${v.context || "—"}`,
-          `Diagnostics: ${v.diagnostics.join(", ") || "—"}`,
-          "",
-          "Message:",
-          v.message
-        ].join("\n");
-      }
-      function submitWhatsApp(v){
-        const text = buildText(v);
-        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(url, "_blank", "noopener,noreferrer");
-      }
-
-      async function sendToApi(v){
-        const payload = {
+      function buildPayload(v, hcaptchaToken){
+        return {
           company: v.hp,
           fullName: v.fullName,
           phone: v.phone,
@@ -251,46 +241,106 @@ const HCAPTCHA_SITEKEY = "fa3829c8-f484-44aa-b630-69f84ec6d6c0";
           city: v.city,
           propertyType: v.propertyType,
           context: v.context,
-          diagnostics: v.diagnostics,
+          diagnostics: v.diagnostics.join(', '),
           message: v.message,
-          hcaptchaToken: window.hcaptcha?.getResponse?.() || ''
+          hcaptchaToken: hcaptchaToken
         };
-        const r = await fetch(API_URL, {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify(payload)
-        });
-        return r.json();
+      }
+      function showToast(type, title, msg){
+        clearTimeout(toastTimer);
+        $toast.removeAttribute('hidden');
+        $toastCard.classList.remove('toast-success','toast-error','show');
+        // reflow
+        void $toastCard.offsetWidth;
+        if (type === 'success') $toastCard.classList.add('toast-success'); else $toastCard.classList.add('toast-error');
+        $toastTitle.textContent = title;
+        $toastMsg.textContent = msg;
+        $toastCard.classList.add('show');
+        toastTimer = setTimeout(hideToast, 4000);
+      }
+      function hideToast(){
+        $toastCard.classList.remove('show');
+        setTimeout(function(){ $toast.setAttribute('hidden',''); }, 180);
+      }
+      $toastClose.addEventListener('click', hideToast);
+      window.addEventListener('keydown', function(e){ if(e.key==='Escape') hideToast(); });
+
+      function buildText(v){
+        var parts = [
+          "Demande de devis — Expertise Diag",
+          "",
+          "Nom: " + v.fullName,
+          "Téléphone: " + v.phone,
+          "Email: " + (v.email || "—"),
+          "Ville: " + (v.city || "—"),
+          "Type de bien: " + (v.propertyType || "—"),
+          "Contexte: " + (v.context || "—"),
+          "Diagnostics: " + (v.diagnostics.join(", ") || "—"),
+          "",
+          "Message:",
+          v.message
+        ];
+        return parts.join("\n");
       }
 
-      $f?.addEventListener('submit', async (e)=>{
+      /* ===== Numéro WhatsApp du diagnostiqueur ===== */
+      // REMPLACE ce numéro par le tien (formats acceptés: "07 12 34 56 78" ou "+33 7 12 34 56 78")
+      var WHATSAPP_PHONE = "07 45 68 76 64";
+      function toE164FR(n){
+        var digits = String(n||'').replace(/\D/g,'');
+        if (!digits) return '';
+        if (digits.indexOf('33') === 0) return digits;  // déjà au format 33...
+        if (digits.indexOf('0') === 0) return '33' + digits.slice(1); // 0X.. -> 33X..
+        return digits; // dernier recours
+      }
+      function submitWhatsApp(v){
+        var phone = toE164FR(WHATSAPP_PHONE);
+        var text  = buildText(v);
+        var url   = "https://wa.me/" + phone + "?text=" + encodeURIComponent(text);
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+
+      $f.addEventListener('submit', function(e){
         e.preventDefault();
-        const v = getVals();
+        var v = getVals();
         if (!validate(v)) return;
+
+        // hCaptcha token
+        var textarea = document.querySelector('textarea[name="h-captcha-response"]');
+        var token = textarea ? String(textarea.value||'').trim() : '';
+        if (!token){ showToast('error','Captcha requis','Veuillez valider le captcha.'); return; }
+
         $submit.disabled = true; $submit.textContent = "Envoi…";
-        try {
-          const res = await sendToApi(v);
-          if (res?.ok){ toast("Votre demande a bien été envoyée. Merci !", true); $f.reset(); window.hcaptcha?.reset?.(); }
-          else {
-            const m = res?.error === 'captcha_failed' ? "Captcha invalide. Merci de réessayer."
-              : res?.error === 'smtp_config' ? "API indisponible (configuration)."
-              : "Échec de l’envoi. Merci de réessayer.";
-            toast(m, false);
-          }
-        } catch {
-          toast("Erreur réseau, merci de réessayer.", false);
-        } finally {
-          $submit.disabled = false; $submit.textContent = "Envoyer par e-mail";
-        }
+        fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(buildPayload(v, token))
+        }).then(function(resp){ return resp.json().then(function(j){ return { ok: resp.ok, json: j }; }); })
+          .then(function(r){
+            if (r.ok && r.json && r.json.ok){
+              showToast('success','E-mail envoyé','Votre demande a bien été envoyée. Nous revenons vers vous rapidement.');
+              $f.reset();
+              if (window.hcaptcha && typeof window.hcaptcha.reset === 'function'){ window.hcaptcha.reset(); }
+            } else {
+              showToast('error','Envoi impossible','Merci de réessayer dans quelques minutes.');
+            }
+          })
+          .catch(function(){
+            showToast('error','Erreur réseau','Vérifiez votre connexion et réessayez.');
+          })
+          .finally(function(){
+            $submit.disabled = false; $submit.textContent = "Envoyer";
+          });
       });
 
-      $btnWa?.addEventListener('click', ()=>{
-        const v = getVals();
-        if (!validate(v)) return; // on exige aussi le captcha pour WA (cohérence anti-spam)
+      $btnWa.addEventListener('click', function(){
+        var v = getVals();
+        if (!validate(v)) return;
         submitWhatsApp(v);
       });
 
-      $consentBtn?.addEventListener('click', (ev)=> {
-        ev.preventDefault();
+      $consentBtn.addEventListener('click', function(e){
+        e.preventDefault();
         window.dispatchEvent(new CustomEvent('open-consent'));
       });
     })();
